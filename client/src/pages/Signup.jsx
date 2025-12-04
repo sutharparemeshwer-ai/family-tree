@@ -3,6 +3,14 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import './Signup.css';
 
+// SVG Icon for the placeholder
+const UserIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+    <circle cx="12" cy="7" r="4"></circle>
+  </svg>
+);
+
 const Signup = () => {
   const [formData, setFormData] = useState({
     email: '',
@@ -14,6 +22,7 @@ const Signup = () => {
   const [preview, setPreview] = useState('');
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const { email, first_name, last_name, password } = formData;
@@ -33,17 +42,20 @@ const Signup = () => {
     setError('');
     setMessage('');
 
-    if (!email || !first_name || !last_name || !password || !profileImage) {
-      setError('All fields including profile image are required.');
+    if (!email || !first_name || !last_name || !password) {
+      setError('All fields except profile image are required.');
       return;
     }
 
+    setLoading(true);
     const data = new FormData();
     data.append('email', email);
     data.append('first_name', first_name);
     data.append('last_name', last_name);
     data.append('password', password);
-    data.append('profile_image', profileImage);
+    if (profileImage) {
+      data.append('profile_image', profileImage);
+    }
 
     try {
       const res = await axios.post('http://localhost:5000/api/auth/signup', data, {
@@ -57,13 +69,15 @@ const Signup = () => {
       }, 2000);
     } catch (err) {
       setError(err.response?.data?.message || 'An error occurred during signup.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="signup-container">
       <form className="signup-form" onSubmit={onSubmit}>
-        <h2>Create Account</h2>
+        <h2 className="form-title">Create Your Account</h2>
         {error && <p className="error-message">{error}</p>}
         {message && <p className="success-message">{message}</p>}
         
@@ -72,7 +86,10 @@ const Signup = () => {
             {preview ? (
               <img src={preview} alt="Profile Preview" className="profile-preview" />
             ) : (
-              <span>+</span>
+              <div className="profile-icon-container">
+                <UserIcon />
+                <span>Add Photo</span>
+              </div>
             )}
           </label>
           <input 
@@ -80,16 +97,19 @@ const Signup = () => {
             type="file" 
             onChange={onFileChange} 
             accept="image/*"
-            required
           />
         </div>
 
-        <input type="email" name="email" value={email} onChange={onChange} placeholder="Email" required />
-        <input type="text" name="first_name" value={first_name} onChange={onChange} placeholder="First Name" required />
-        <input type="text" name="last_name" value={last_name} onChange={onChange} placeholder="Last Name" required />
-        <input type="password" name="password" value={password} onChange={onChange} placeholder="Password" required />
+        <div className="input-group">
+          <input type="email" name="email" value={email} onChange={onChange} placeholder="Email" required />
+          <input type="text" name="first_name" value={first_name} onChange={onChange} placeholder="First Name" required />
+          <input type="text" name="last_name" value={last_name} onChange={onChange} placeholder="Last Name" required />
+          <input type="password" name="password" value={password} onChange={onChange} placeholder="Password" required />
+        </div>
         
-        <button type="submit">Sign Up</button>
+        <button type="submit" className="submit-btn" disabled={loading}>
+          {loading ? 'Signing Up...' : 'Sign Up'}
+        </button>
         
         <p className="login-link">
           Already have an account? <Link to="/login">Log In</Link>

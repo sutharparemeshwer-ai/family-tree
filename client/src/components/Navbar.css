@@ -1,0 +1,101 @@
+/* Using Poppins font, assuming it's imported globally */
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 2.5rem;
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 1200px;
+  z-index: 1000;
+
+  /* Floating white card style */
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand-link {
+  color: #2e7d32; /* Dark Green from theme */
+  font-weight: 600;
+  font-size: 1.5rem;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.navbar-brand-link:hover {
+  color: #4CAF50; /* Primary Green */
+}
+
+.navbar-user {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.user-profile-img {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #eee; /* Light border for the image */
+  margin-right: 1rem;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.user-name {
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.2;
+  color: #333; /* Dark text color */
+}
+
+.user-email {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  color: #555; /* Slightly lighter dark color */
+}
+
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 15px);
+  right: 0;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  width: 180px;
+  border: 1px solid #f0f0f0;
+}
+
+.logout-btn {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+  transition: background-color 0.3s ease;
+}
+
+.logout-btn:hover {
+  background-color: #f5f5f5;
+}
+
+.navbar-logo {
+  height: 40px; /* Adjust as needed */
+  display: block; /* Removes extra space below the image */
+}

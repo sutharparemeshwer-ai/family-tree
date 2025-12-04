@@ -1,0 +1,64 @@
+.main-page-container {
+  background-color: #f8f9fa; /* A light, neutral background for the whole page */
+  overflow-x: hidden; /* Prevents horizontal scroll */
+}
+
+/* This is now a full-screen container for the hero content */
+.hero-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 100vh; /* Full viewport height */
+  width: 100%;
+  padding: 0 1rem; /* Horizontal padding */
+
+  /* White background with green dots and top shadow */
+  background-color: #ffffff;
+  background-image: 
+    radial-gradient(ellipse at 50% 0%, rgba(76, 175, 80, 0.15) 0%, transparent 60%),
+    radial-gradient(rgba(76, 175, 80, 0.5) 1px, transparent 1px);
+  background-size: 100% 100%, 15px 15px;
+}
+
+
+
+.hero-title {
+  font-size: 4.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+  
+  /* Green gradient text effect */
+  background: linear-gradient(to right, #4CAF50, #2e7d32);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero-subtitle {
+  font-size: 1.8rem;
+  color: #555;
+  margin-bottom: 2.5rem;
+  max-width: 600px;
+}
+
+.hero-cta-btn {
+  padding: 1rem 2.5rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #ffffff;
+  background-color: #4CAF50; /* Primary Green */
+  border: none;
+  border-radius: 50px; /* Pill shape */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+.hero-cta-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+}
