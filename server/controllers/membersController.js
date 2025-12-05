@@ -94,54 +94,6 @@ const createMember = async (req, res) => {
   }
 };
 
-const createSelfMember = async (req, res) => {
-  const tree_owner_id = req.user.userId; // From authMiddleware
-
-  const client = await db.getClient();
-
-  try {
-    // Fetch user details from the users table
-    const userResult = await client.query('SELECT first_name, last_name, profile_img_url FROM users WHERE id = $1', [tree_owner_id]);
-    if (userResult.rows.length === 0) {
-      return res.status(404).json({ message: 'User not found in users table.' });
-    }
-    const { first_name, last_name, profile_img_url } = userResult.rows[0];
-
-    // Check if a root member already exists for this user
-    const existingRoot = await client.query(
-      'SELECT id FROM family_members WHERE tree_owner_id = $1 AND father_id IS NULL AND mother_id IS NULL',
-      [tree_owner_id]
-    );
-    if (existingRoot.rows.length > 0) {
-      return res.status(409).json({ message: 'Root family member already exists for this user.' });
-    }
-
-    // Insert user details into family_members as the root
-    const insertQuery = `
-      INSERT INTO family_members(tree_owner_id, first_name, last_name, profile_img_url)
-      VALUES($1, $2, $3, $4)
-      RETURNING id, first_name, last_name, profile_img_url;
-    `;
-    const newMemberResult = await client.query(insertQuery, [
-      tree_owner_id,
-      first_name,
-      last_name,
-      profile_img_url,
-    ]);
-
-    res.status(201).json({
-      message: 'Root family member created successfully!',
-      member: newMemberResult.rows[0],
-    });
-
-  } catch (error) {
-    console.error('Error creating self member:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  } finally {
-    client.release();
-  }
-};
-
 
 const getMembers = async (req, res) => {
   const tree_owner_id = req.user.userId; // From authMiddleware
@@ -161,6 +113,5 @@ const getMembers = async (req, res) => {
 module.exports = {
   createMember,
   getMembers,
-  createSelfMember,
 };
 

@@ -2,44 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Navbar from '../components/Navbar';
 import Modal from '../components/Modal';
 import AddMemberForm from '../components/AddMemberForm';
+import MemberCard from '../components/MemberCard'; // Import MemberCard
 import api from '../utils/api'; // Import the api utility
 import './Tree.css';
-
-// Simple Plus Icon
-const PlusIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="12" y1="5" x2="12" y2="19"></line>
-    <line x1="5" y1="12" x2="19" y2="12"></line>
-  </svg>
-);
-
-// Reusable Member Card Component
-const MemberCard = ({ member, serverUrl, onAddRelative }) => {
-  const [menuVisible, setMenuVisible] = useState(false);
-
-  return (
-    <div className="member-card">
-      <button className="add-btn" onClick={() => setMenuVisible(!menuVisible)}>
-        <PlusIcon />
-      </button>
-      {menuVisible && (
-        <div className="add-menu">
-          <button onClick={() => onAddRelative('Father', member.id)}>Add Father</button>
-          <button onClick={() => onAddRelative('Mother', member.id)}>Add Mother</button>
-          <button onClick={() => onAddRelative('Spouse', member.id)}>Add Spouse</button>
-          <button onClick={() => onAddRelative('Child', member.id)}>Add Child</button>
-        </div>
-      )}
-      <img 
-        src={member.profile_img_url ? `${serverUrl}${member.profile_img_url}` : 'https://via.placeholder.com/120'} 
-        alt={`${member.first_name} ${member.last_name}`}
-        className="member-card-img"
-      />
-      <h2 className="member-card-name">{member.first_name} {member.last_name}</h2>
-      {member.nickname && <p className="member-card-nickname">({member.nickname})</p>}
-    </div>
-  );
-};
 
 
 const Tree = () => {
@@ -50,6 +15,7 @@ const Tree = () => {
   const [relativeToId, setRelativeToId] = useState(null); // ID of the member to whom we are adding a relative
   const [loadingMembers, setLoadingMembers] = useState(true);
   const [membersError, setMembersError] = useState('');
+  const [successMessage, setSuccessMessage] = useState(''); // State for success message
 
   const serverUrl = 'http://localhost:5000';
 
@@ -60,33 +26,15 @@ const Tree = () => {
     try {
       const response = await api.get('/members');
       setFamilyMembers(response.data);
+      return response.data; // Return data for immediate use
     } catch (err) {
       console.error('Error fetching family members:', err);
       setMembersError('Failed to load family members.');
+      return [];
     } finally {
       setLoadingMembers(false);
     }
   }, []);
-
-  // Function to create self member if not exists
-  const createSelfIfNotExist = useCallback(async (currentUser) => {
-    if (!currentUser) return;
-
-    // Check if a root member already exists for this user
-    const rootMemberExists = familyMembers.some(member => 
-      member.tree_owner_id === currentUser.id && !member.father_id && !member.mother_id
-    );
-
-    if (!rootMemberExists) {
-      try {
-        await api.post('/members/self');
-        fetchFamilyMembers(); // Re-fetch after creating self
-      } catch (err) {
-        console.error('Error creating self member:', err);
-        setMembersError('Failed to create your root family member.');
-      }
-    }
-  }, [familyMembers, fetchFamilyMembers]); // Depend on familyMembers to re-run if it changes
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -97,21 +45,24 @@ const Tree = () => {
     }
   }, [fetchFamilyMembers]);
 
-  useEffect(() => {
-    if (user && !loadingMembers && !membersError) {
-      createSelfIfNotExist(user);
-    }
-  }, [user, loadingMembers, membersError, createSelfIfNotExist]);
-
 
   const handleAddRelative = (type, targetMemberId) => {
     setRelationType(type);
     setRelativeToId(targetMemberId); // Set the ID of the member whose '+' was clicked
     setModalOpen(true);
+    setSuccessMessage(''); // Clear success message when opening modal
   };
 
-  const handleMemberAdded = () => {
+  const handleAddSelf = () => {
+    setRelationType('Self');
+    setRelativeToId(null); // No relative to link to when adding self
+    setModalOpen(true);
+    setSuccessMessage(''); // Clear success message when opening modal
+  };
+
+  const handleMemberAdded = (message) => {
     setModalOpen(false); // Close modal
+    setSuccessMessage(message || 'Member added successfully!'); // Set success message
     fetchFamilyMembers(); // Re-fetch members to update the list
   };
 
@@ -143,10 +94,19 @@ const Tree = () => {
       <div className="tree-content">
         {loadingMembers && <p>Loading family members...</p>}
         {membersError && <p className="error-message">{membersError}</p>}
+        {successMessage && <p className="success-message">{successMessage}</p>} {/* Display success message */}
         
         {!loadingMembers && !membersError && (
           <div className="tree-visualization">
-            {mainUserMember ? (
+            {/* If no main user member, prompt to add self */}
+            {!mainUserMember && (
+              <div className="add-self-prompt">
+                <p>You haven't added yourself to the family tree yet.</p>
+                <button className="hero-cta-btn" onClick={handleAddSelf}>Add Myself</button>
+              </div>
+            )}
+
+            {mainUserMember && (
               <>
                 {/* Parents Row */}
                 {(fatherOfMainUser || motherOfMainUser) && (
@@ -189,10 +149,10 @@ const Tree = () => {
                     </>
                   )}
                 </div>
+                {/* Placeholder for Children Row */}
+                {/* <div className="connection-line vertical"></div> */}
+                {/* <div className="generation-row children-row"></div> */}
               </>
-            ) : (
-              // This case should ideally not be reached if createSelfIfNotExist works
-              <p>No root member found. Attempting to create...</p>
             )}
           </div>
         )}
@@ -211,3 +171,4 @@ const Tree = () => {
 };
 
 export default Tree;
+

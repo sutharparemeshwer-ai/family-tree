@@ -28,10 +28,6 @@ router.post(
   membersController.createMember
 );
 
-// POST /api/members/self
-// This route automatically creates the root member for the logged-in user
-router.post('/self', authMiddleware, membersController.createSelfMember);
-
 // GET /api/members
 // This route is protected and fetches all family members for the logged-in user
 router.get('/', authMiddleware, membersController.getMembers);
