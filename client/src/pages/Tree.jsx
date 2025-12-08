@@ -207,10 +207,40 @@ const Tree = () => {
   const allParentSiblings = [...fatherSiblings, ...motherSiblings];
   const parentSiblingIds = new Set(allParentSiblings.map(s => s.id));
   
+  // Debug: Log parent siblings
+  if (fatherSiblings.length > 0 || motherSiblings.length > 0) {
+    console.log('=== PARENT SIBLINGS DEBUG ===');
+    console.log('Father:', father?.first_name, 'ID:', father?.id, 'Parents:', father?.father_id, father?.mother_id);
+    console.log('Father siblings:', fatherSiblings.map(s => `${s.first_name} (ID: ${s.id}, Parents: ${s.father_id}, ${s.mother_id})`));
+    console.log('Mother:', mother?.first_name, 'ID:', mother?.id, 'Parents:', mother?.father_id, mother?.mother_id);
+    console.log('Mother siblings:', motherSiblings.map(s => `${s.first_name} (ID: ${s.id}, Parents: ${s.father_id}, ${s.mother_id})`));
+    console.log('Parent sibling IDs to exclude:', Array.from(parentSiblingIds));
+  }
+  
   // Find user's siblings, but EXCLUDE parent siblings
   // Parent siblings should only appear in Parents section, not in Your section
   const allSiblingsRaw = loggedInUserMember ? findSiblings(loggedInUserMember) : [];
-  const allSiblings = allSiblingsRaw.filter(sibling => !parentSiblingIds.has(sibling.id));
+  
+  // Debug: Log user siblings before exclusion
+  if (allSiblingsRaw.length > 0) {
+    console.log('=== USER SIBLINGS BEFORE EXCLUSION ===');
+    console.log('User:', loggedInUserMember?.first_name, 'ID:', loggedInUserMember?.id, 'Parents:', loggedInUserMember?.father_id, loggedInUserMember?.mother_id);
+    console.log('Raw user siblings:', allSiblingsRaw.map(s => `${s.first_name} (ID: ${s.id}, Parents: ${s.father_id}, ${s.mother_id})`));
+  }
+  
+  const allSiblings = allSiblingsRaw.filter(sibling => {
+    const isExcluded = parentSiblingIds.has(sibling.id);
+    if (isExcluded) {
+      console.log(`EXCLUDING ${sibling.first_name} (ID: ${sibling.id}) from user siblings - it's a parent sibling`);
+    }
+    return !isExcluded;
+  });
+  
+  // Debug: Log final user siblings
+  if (allSiblings.length > 0) {
+    console.log('=== FINAL USER SIBLINGS ===');
+    console.log('Final user siblings:', allSiblings.map(s => `${s.first_name} (ID: ${s.id})`));
+  }
   
   // Separate user's siblings into brothers and sisters
   const brothers = allSiblings.filter(sibling => sibling.gender === 'male');
