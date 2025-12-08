@@ -74,6 +74,9 @@ const Tree = () => {
     setModalOpen(false); // Close modal
     setSuccessMessage(message || 'Member added successfully!'); // Set success message
 
+    // Small delay to ensure backend has finished updating relationships
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
     // Re-fetch members to update the list
     await fetchFamilyMembers();
   };
@@ -196,24 +199,6 @@ const Tree = () => {
   const children = loggedInUserMember ? findChildren(loggedInUserMember.id) : [];
   const siblings = loggedInUserMember ? findSiblings(loggedInUserMember) : [];
   const otherMembers = findOtherMembers(loggedInUserMember, siblings);
-
-  // Debug logging
-  React.useEffect(() => {
-    if (loggedInUserMember) {
-      console.log('=== SIBLING DETECTION DEBUG ===');
-      console.log('Logged in user:', loggedInUserMember.first_name, loggedInUserMember.last_name);
-      console.log('User father_id:', loggedInUserMember.father_id);
-      console.log('User mother_id:', loggedInUserMember.mother_id);
-      console.log('All family members:', familyMembers.map(m => ({
-        id: m.id,
-        name: `${m.first_name} ${m.last_name}`,
-        father_id: m.father_id,
-        mother_id: m.mother_id
-      })));
-      console.log('Detected siblings:', siblings.map(s => `${s.first_name} ${s.last_name}`));
-      console.log('Other members:', otherMembers.map(o => `${o.first_name} ${o.last_name}`));
-    }
-  }, [loggedInUserMember, siblings, otherMembers, familyMembers]);
 
   return (
     <div className="tree-page-container">

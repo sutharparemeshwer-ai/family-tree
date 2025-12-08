@@ -137,13 +137,15 @@ const createMember = async (req, res) => {
               text: siblingUpdateQuery,
               values: siblingValues,
             };
+            console.log('Sibling update query created:', updateQuery.text, 'with values:', updateQuery.values);
           } else {
             // User has no parents, so sibling can't share parents
             // This is expected if user hasn't added parents yet
             console.log('User has no parents, sibling will not have parent relationships set');
           }
         } else {
-          console.log('Could not find user member for sibling creation');
+          console.log('Could not find user member for sibling creation. User:', user_first_name, user_last_name);
+          console.log('Available members:', allUserMembers.rows.map(m => `${m.first_name} ${m.last_name}`));
         }
         break;
       default:
