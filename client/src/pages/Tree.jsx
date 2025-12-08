@@ -236,10 +236,20 @@ const Tree = () => {
     return !isExcluded;
   });
   
-  // Debug: Log final user siblings
-  if (allSiblings.length > 0) {
+  // Debug: Log final user siblings with detailed parent comparison
+  if (allSiblings.length > 0 || allSiblingsRaw.length > 0) {
     console.log('=== FINAL USER SIBLINGS ===');
-    console.log('Final user siblings:', allSiblings.map(s => `${s.first_name} (ID: ${s.id})`));
+    console.log('User parent IDs:', loggedInUserMember?.father_id, loggedInUserMember?.mother_id);
+    console.log('Father parent IDs:', father?.father_id, father?.mother_id);
+    console.log('Mother parent IDs:', mother?.father_id, mother?.mother_id);
+    console.log('All raw siblings with parent IDs:', allSiblingsRaw.map(s => ({
+      name: s.first_name,
+      id: s.id,
+      father_id: s.father_id,
+      mother_id: s.mother_id,
+      isParentSibling: parentSiblingIds.has(s.id)
+    })));
+    console.log('Final user siblings:', allSiblings.map(s => `${s.first_name} (ID: ${s.id}, Parents: ${s.father_id}, ${s.mother_id})`));
   }
   
   // Separate user's siblings into brothers and sisters

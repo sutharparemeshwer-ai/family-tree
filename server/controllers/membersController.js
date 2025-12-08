@@ -119,6 +119,12 @@ const createMember = async (req, res) => {
 
         if (clickedMember.rows.length > 0) {
           const { father_id, mother_id } = clickedMember.rows[0];
+          
+          console.log('=== ADDING SIBLING DEBUG ===');
+          console.log('Clicked member ID:', relativeToId);
+          console.log('Clicked member parents:', father_id, mother_id);
+          console.log('New sibling ID:', newMemberId);
+          console.log('Relation type:', relationType);
 
           // Create the update query to set the same parents as the clicked person
           let siblingUpdateQuery = 'UPDATE family_members SET ';
@@ -142,6 +148,9 @@ const createMember = async (req, res) => {
               text: siblingUpdateQuery,
               values: siblingValues,
             };
+            console.log('Sibling update query:', updateQuery.text);
+            console.log('Sibling update values:', updateQuery.values);
+            console.log('New sibling will have parents:', father_id, mother_id);
           } else {
             // Clicked person has no parents, so sibling can't share parents
             console.log('Clicked person has no parents, sibling will not have parent relationships set');
