@@ -145,6 +145,7 @@
   gap: 0.5rem;
   margin-right: 1rem;
   flex-shrink: 0;
+  flex-wrap: nowrap;
 }
 
 .empty-siblings {
@@ -207,7 +208,7 @@
     flex-wrap: wrap;
   }
 
-  .siblings-section {
+  .siblings-container {
     order: -1; /* Put siblings first on mobile */
     width: 100%;
     justify-content: center;

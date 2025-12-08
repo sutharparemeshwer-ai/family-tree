@@ -70,10 +70,14 @@ const Tree = () => {
     setSuccessMessage(''); // Clear success message when opening modal
   };
 
-  const handleMemberAdded = (message) => {
+  const handleMemberAdded = async (message) => {
+    console.log('Member added, refreshing data...');
     setModalOpen(false); // Close modal
     setSuccessMessage(message || 'Member added successfully!'); // Set success message
-    fetchFamilyMembers(); // Re-fetch members to update the list
+
+    // Re-fetch members to update the list
+    await fetchFamilyMembers();
+    console.log('Data refreshed after adding member');
   };
 
   // Helper function to find the logged-in user's member
@@ -117,8 +121,13 @@ const Tree = () => {
     const userFatherId = mainUserMember.father_id;
     const userMotherId = mainUserMember.mother_id;
 
+    console.log('Finding siblings for user:', mainUserMember.first_name, 'with parents:', userFatherId, userMotherId);
+
     // If user has no parents, they can't have siblings
-    if (!userFatherId && !userMotherId) return [];
+    if (!userFatherId && !userMotherId) {
+      console.log('User has no parents, returning empty siblings array');
+      return [];
+    }
 
     // Find all family members that share at least one parent with the user
     const siblings = familyMembers.filter(member => {
@@ -131,9 +140,12 @@ const Tree = () => {
       const sharesFather = userFatherId && member.father_id === userFatherId;
       const sharesMother = userMotherId && member.mother_id === userMotherId;
 
+      console.log('Checking member:', member.first_name, 'shares father:', sharesFather, 'shares mother:', sharesMother);
+
       return sharesFather || sharesMother;
     });
 
+    console.log('Found siblings:', siblings.length, siblings.map(s => s.first_name));
     return siblings;
   };
 
@@ -189,6 +201,13 @@ const Tree = () => {
   const children = loggedInUserMember ? findChildren(loggedInUserMember.id) : [];
   const siblings = loggedInUserMember ? findSiblings(loggedInUserMember) : [];
   const otherMembers = findOtherMembers(loggedInUserMember, siblings);
+
+  // Debug siblings display
+  console.log('=== SIBLINGS DISPLAY DEBUG ===');
+  console.log('Logged in user member:', loggedInUserMember);
+  console.log('Found siblings:', siblings);
+  console.log('Siblings length:', siblings.length);
+  console.log('Siblings container should render:', siblings.length > 0);
 
   return (
     <div className="tree-page-container">
