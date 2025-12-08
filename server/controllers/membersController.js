@@ -103,8 +103,8 @@ const createMember = async (req, res) => {
       case 'Sister':
         // Find the logged-in user's member record to get their parents
         const userMember = await client.query(
-          'SELECT id, father_id, mother_id FROM family_members WHERE tree_owner_id = $1',
-          [tree_owner_id]
+          'SELECT id, father_id, mother_id FROM family_members WHERE tree_owner_id = $1 AND first_name = $2 AND last_name = $3',
+          [tree_owner_id, user_first_name, user_last_name]
         );
 
         if (userMember.rows.length > 0) {
