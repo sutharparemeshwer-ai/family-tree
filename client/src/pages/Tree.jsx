@@ -294,7 +294,7 @@ const Tree = () => {
                         />
                       )}
                     </div>
-                    {(siblings.length > 0 || loggedInUserMember) && <div className="connection-line vertical"></div>}
+                    {(allSiblings.length > 0 || loggedInUserMember) && <div className="connection-line vertical"></div>}
                   </div>
                 )}
 
