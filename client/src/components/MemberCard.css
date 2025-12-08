@@ -15,14 +15,58 @@
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
 }
 
+.image-container {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin-bottom: 1rem;
+}
+
 .member-card-img {
-  width: 100px; /* Smaller image */
-  height: 100px; /* Smaller image */
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   object-fit: cover;
   border: 4px solid #4CAF50; /* Primary Green */
-  margin-bottom: 1rem; /* Reduced margin */
   box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+  transition: opacity 0.3s ease;
+  opacity: 0;
+}
+
+.member-card-img.loaded {
+  opacity: 1;
+}
+
+.member-card-img.error {
+  border-color: #ff6b6b;
+}
+
+.image-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid #ddd;
+}
+
+.image-loading-spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid #ddd;
+  border-top: 3px solid #4CAF50;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .member-card-name {

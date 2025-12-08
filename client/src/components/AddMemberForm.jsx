@@ -10,7 +10,7 @@ const UploadIcon = () => (
   </svg>
 );
 
-const AddMemberForm = ({ relationType, onCancel, relativeToId }) => {
+const AddMemberForm = ({ relationType, onCancel, relativeToId, onMemberAdded }) => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -61,8 +61,11 @@ const AddMemberForm = ({ relationType, onCancel, relativeToId }) => {
         },
       });
       console.log(res.data);
-      onCancel(); // Close modal on success
-      // We might want to trigger a re-fetch of the tree data here in the future
+      if (onMemberAdded) {
+        onMemberAdded(res.data.message || 'Member added successfully!');
+      } else {
+        onCancel(); // Fallback to just closing modal
+      }
     } catch (err) {
       setError(err.response?.data?.message || 'An error occurred.');
     } finally {

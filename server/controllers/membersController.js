@@ -64,14 +64,38 @@ const createMember = async (req, res) => {
         };
         break;
       case 'Child':
-        // This case is more complex. For now, we'll assume the user needs to specify
-        // the other parent later. We just link the child to the current person.
-        // A more advanced implementation might ask "who is the other parent?".
-        // We also don't know the gender of the current person (relativeToId).
-        // We will leave this logic to be improved upon later.
-        // For now, we just create the child and don't link them as a child.
-        // A better approach would be to update the child's father_id or mother_id.
-        console.log('Add Child logic needs to be fully implemented based on gender of parent.');
+        // Set the current person as a parent of the new child
+        // We need to determine if the current person is father or mother
+        // For now, we'll check if the current person has any existing children to determine gender
+        const existingChildren = await client.query(
+          'SELECT * FROM family_members WHERE father_id = $1 OR mother_id = $1',
+          [relativeToId]
+        );
+
+        if (existingChildren.rows.length > 0) {
+          // If this person already has children, check if they're set as father or mother
+          const firstChild = existingChildren.rows[0];
+          if (firstChild.father_id === relativeToId) {
+            // This person is a father
+            updateQuery = {
+              text: 'UPDATE family_members SET father_id = $1 WHERE id = $2',
+              values: [relativeToId, newMemberId],
+            };
+          } else if (firstChild.mother_id === relativeToId) {
+            // This person is a mother
+            updateQuery = {
+              text: 'UPDATE family_members SET mother_id = $1 WHERE id = $2',
+              values: [relativeToId, newMemberId],
+            };
+          }
+        } else {
+          // No existing children, assume this person is the father for now
+          // This is a simplification - ideally we'd ask the user
+          updateQuery = {
+            text: 'UPDATE family_members SET father_id = $1 WHERE id = $2',
+            values: [relativeToId, newMemberId],
+          };
+        }
         break;
       default:
         // If relationType is unknown, do not link.
