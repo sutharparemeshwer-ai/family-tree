@@ -131,13 +131,33 @@
   border-radius: 8px;
   border: 2px solid #4CAF50;
   display: flex;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 0.5rem;
   flex-wrap: nowrap;
   position: relative;
   width: 100%;
   overflow-x: auto;
+  min-height: 200px;
+}
+
+.user-siblings-row .member-card {
+  flex-shrink: 0;
+  width: auto;
+  min-width: 200px;
+  max-width: 250px;
+}
+
+.user-siblings-row .connection-line {
+  flex-shrink: 0;
+  width: 20px;
+  height: 2px;
+  background-color: #4CAF50;
+}
+
+.user-siblings-row .empty-siblings-placeholder {
+  flex-shrink: 0;
 }
 
 .empty-siblings-placeholder {
@@ -197,13 +217,14 @@
 
   .user-siblings-row {
     flex-direction: row;
-    justify-content: center;
-    flex-wrap: wrap;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow-x: scroll;
+    -webkit-overflow-scrolling: touch;
   }
 
-  .user-siblings-row {
-    flex-wrap: wrap;
-    justify-content: center;
+  .user-siblings-row > * {
+    min-width: 180px;
   }
 
   .user-spouse-section {
