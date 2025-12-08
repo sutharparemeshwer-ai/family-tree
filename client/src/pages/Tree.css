@@ -123,6 +123,24 @@
   background-color: rgba(33, 150, 243, 0.05);
   padding: 1rem;
   border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.parent-with-siblings {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.parent-siblings-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .user-siblings-row {

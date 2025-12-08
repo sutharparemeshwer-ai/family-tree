@@ -110,21 +110,17 @@ const createMember = async (req, res) => {
         break;
       case 'Brother':
       case 'Sister':
-        // Find the logged-in user's member record to get their parents
-        const allUserMembers = await client.query(
-          'SELECT id, father_id, mother_id, first_name, last_name FROM family_members WHERE tree_owner_id = $1',
-          [tree_owner_id]
+        // Find the member whose + button was clicked to get their parents
+        // The new sibling should share the same parents as this person
+        const clickedMember = await client.query(
+          'SELECT id, father_id, mother_id FROM family_members WHERE id = $1 AND tree_owner_id = $2',
+          [relativeToId, tree_owner_id]
         );
 
-        // Find the member that matches the logged-in user (by name)
-        const userMember = allUserMembers.rows.find(member =>
-          member.first_name === user_first_name && member.last_name === user_last_name
-        );
+        if (clickedMember.rows.length > 0) {
+          const { father_id, mother_id } = clickedMember.rows[0];
 
-        if (userMember) {
-          const { father_id, mother_id } = userMember;
-
-          // Create the update query to set the same parents as the logged-in user
+          // Create the update query to set the same parents as the clicked person
           let siblingUpdateQuery = 'UPDATE family_members SET ';
           const siblingValues = [];
           const siblingParts = [];
@@ -146,15 +142,12 @@ const createMember = async (req, res) => {
               text: siblingUpdateQuery,
               values: siblingValues,
             };
-            console.log('Sibling update query created:', updateQuery.text, 'with values:', updateQuery.values);
           } else {
-            // User has no parents, so sibling can't share parents
-            // This is expected if user hasn't added parents yet
-            console.log('User has no parents, sibling will not have parent relationships set');
+            // Clicked person has no parents, so sibling can't share parents
+            console.log('Clicked person has no parents, sibling will not have parent relationships set');
           }
         } else {
-          console.log('Could not find user member for sibling creation. User:', user_first_name, user_last_name);
-          console.log('Available members:', allUserMembers.rows.map(m => `${m.first_name} ${m.last_name}`));
+          console.log('Could not find clicked member for sibling creation. relativeToId:', relativeToId);
         }
         break;
       default:
