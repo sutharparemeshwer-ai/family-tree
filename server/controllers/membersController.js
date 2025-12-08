@@ -99,17 +99,16 @@ const createMember = async (req, res) => {
         break;
       case 'Brother':
       case 'Sister':
-        // Set the new person as a sibling of the existing person
-        // They should share the same parents
-        const existingPerson = await client.query(
-          'SELECT father_id, mother_id FROM family_members WHERE id = $1',
-          [relativeToId]
+        // Find the logged-in user's member record to get their parents
+        const userMember = await client.query(
+          'SELECT id, father_id, mother_id FROM family_members WHERE tree_owner_id = $1',
+          [tree_owner_id]
         );
 
-        if (existingPerson.rows.length > 0) {
-          const { father_id, mother_id } = existingPerson.rows[0];
+        if (userMember.rows.length > 0) {
+          const { father_id, mother_id } = userMember.rows[0];
 
-          // Create the update query to set the same parents
+          // Create the update query to set the same parents as the logged-in user
           let siblingUpdateQuery = 'UPDATE family_members SET ';
           const siblingValues = [];
           const siblingParts = [];
