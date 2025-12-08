@@ -19,6 +19,7 @@ CREATE TABLE family_members (
     nickname VARCHAR(100),
     profile_img_url TEXT,
     description TEXT,
+    gender VARCHAR(50),
     father_id INTEGER REFERENCES family_members(id) ON DELETE SET NULL,
     mother_id INTEGER REFERENCES family_members(id) ON DELETE SET NULL,
     spouse_id INTEGER REFERENCES family_members(id) ON DELETE SET NULL,

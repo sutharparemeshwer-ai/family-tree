@@ -207,15 +207,28 @@ const Tree = () => {
   const allParentSiblings = [...fatherSiblings, ...motherSiblings];
   const parentSiblingIds = new Set(allParentSiblings.map(s => s.id));
   
-  // Debug: Log parent siblings
-  if (fatherSiblings.length > 0 || motherSiblings.length > 0) {
-    console.log('=== PARENT SIBLINGS DEBUG ===');
-    console.log('Father:', father?.first_name, 'ID:', father?.id, 'Parents:', father?.father_id, father?.mother_id);
-    console.log('Father siblings:', fatherSiblings.map(s => `${s.first_name} (ID: ${s.id}, Parents: ${s.father_id}, ${s.mother_id})`));
-    console.log('Mother:', mother?.first_name, 'ID:', mother?.id, 'Parents:', mother?.father_id, mother?.mother_id);
-    console.log('Mother siblings:', motherSiblings.map(s => `${s.first_name} (ID: ${s.id}, Parents: ${s.father_id}, ${s.mother_id})`));
-    console.log('Parent sibling IDs to exclude:', Array.from(parentSiblingIds));
+  // Debug: Log parent siblings with detailed info
+  console.log('=== PARENT SIBLINGS DEBUG ===');
+  if (father) {
+    console.log('Father:', father.first_name, 'ID:', father.id, 'Parents:', father.father_id, father.mother_id);
+    console.log('Father siblings found:', fatherSiblings.length);
+    fatherSiblings.forEach(s => {
+      console.log(`  - ${s.first_name} (ID: ${s.id}, Parents: ${s.father_id}, ${s.mother_id})`);
+      console.log(`    Shares father: ${father.father_id && s.father_id === father.father_id}`);
+      console.log(`    Shares mother: ${father.mother_id && s.mother_id === father.mother_id}`);
+    });
   }
+  if (mother) {
+    console.log('Mother:', mother.first_name, 'ID:', mother.id, 'Parents:', mother.father_id, mother.mother_id);
+    console.log('Mother siblings found:', motherSiblings.length);
+    motherSiblings.forEach(s => {
+      console.log(`  - ${s.first_name} (ID: ${s.id}, Parents: ${s.father_id}, ${s.mother_id})`);
+      console.log(`    Shares father: ${mother.father_id && s.father_id === mother.father_id}`);
+      console.log(`    Shares mother: ${mother.mother_id && s.mother_id === mother.mother_id}`);
+    });
+  }
+  console.log('Total parent siblings:', allParentSiblings.length);
+  console.log('Parent sibling IDs to exclude:', Array.from(parentSiblingIds));
   
   // Find user's siblings, but EXCLUDE parent siblings
   // Parent siblings should only appear in Parents section, not in Your section
@@ -568,4 +581,3 @@ const Tree = () => {
 };
 
 export default Tree;
-

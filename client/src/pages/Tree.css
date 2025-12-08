@@ -191,11 +191,11 @@
 }
 
 .brothers-group {
-  order: -1; /* Brothers appear first (left side) */
+  order: 1; /* Brothers appear last (right side) */
 }
 
 .sisters-group {
-  order: 1; /* Sisters appear last (right side) */
+  order: -1; /* Sisters appear first (left side) */
 }
 
 .user-spouse-container {
