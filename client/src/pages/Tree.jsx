@@ -194,6 +194,21 @@ const Tree = () => {
   const siblings = loggedInUserMember ? findSiblings(loggedInUserMember) : [];
   const otherMembers = findOtherMembers(loggedInUserMember, siblings);
 
+  // Debug sibling detection
+  React.useEffect(() => {
+    console.log('=== SIBLING DEBUG ===');
+    console.log('Logged in user member:', loggedInUserMember);
+    console.log('All family members:', familyMembers.map(m => ({
+      id: m.id,
+      name: `${m.first_name} ${m.last_name}`,
+      father_id: m.father_id,
+      mother_id: m.mother_id,
+      tree_owner_id: m.tree_owner_id
+    })));
+    console.log('Found siblings:', siblings.map(s => `${s.first_name} ${s.last_name}`));
+    console.log('Siblings count:', siblings.length);
+  }, [loggedInUserMember, siblings, familyMembers]);
+
   return (
     <div className="tree-page-container">
       <Navbar />

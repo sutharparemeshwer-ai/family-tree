@@ -4,6 +4,8 @@ const createMember = async (req, res) => {
   // Note: 'relativeToId' is the ID of the person you clicked the '+' on.
   const { firstName, lastName, nickname, description, relationType, relativeToId } = req.body;
   const tree_owner_id = req.user.userId; // From authMiddleware
+  const user_first_name = req.user.first_name;
+  const user_last_name = req.user.last_name;
   const profile_img_url = req.file ? `/uploads/${req.file.filename}` : null;
 
   // Basic validation
@@ -102,8 +104,8 @@ const createMember = async (req, res) => {
         // Find the logged-in user's member record to get their parents
         // Siblings should share the same parents as the logged-in user, regardless of which card was clicked
         const userMember = await client.query(
-          'SELECT id, father_id, mother_id FROM family_members WHERE tree_owner_id = $1 LIMIT 1',
-          [tree_owner_id]
+          'SELECT id, father_id, mother_id FROM family_members WHERE tree_owner_id = $1 AND first_name = $2 AND last_name = $3',
+          [tree_owner_id, user_first_name, user_last_name]
         );
 
         if (userMember.rows.length > 0) {
