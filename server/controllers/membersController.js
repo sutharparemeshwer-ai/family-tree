@@ -102,13 +102,18 @@ const createMember = async (req, res) => {
       case 'Brother':
       case 'Sister':
         // Find the logged-in user's member record to get their parents
-        const userMember = await client.query(
-          'SELECT id, father_id, mother_id FROM family_members WHERE tree_owner_id = $1 AND first_name = $2 AND last_name = $3',
-          [tree_owner_id, user_first_name, user_last_name]
+        const allUserMembers = await client.query(
+          'SELECT id, father_id, mother_id, first_name, last_name FROM family_members WHERE tree_owner_id = $1',
+          [tree_owner_id]
         );
 
-        if (userMember.rows.length > 0) {
-          const { father_id, mother_id } = userMember.rows[0];
+        // Find the member that matches the logged-in user
+        const userMember = allUserMembers.rows.find(member =>
+          member.first_name === user_first_name && member.last_name === user_last_name
+        );
+
+        if (userMember) {
+          const { father_id, mother_id } = userMember;
 
           // Create the update query to set the same parents as the logged-in user
           let siblingUpdateQuery = 'UPDATE family_members SET ';
@@ -150,7 +155,10 @@ const createMember = async (req, res) => {
   } catch (error) {
     await client.query('ROLLBACK');
     console.error('Error creating family member:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ 
+      message: 'Internal server error',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   } finally {
     client.release();
   }
