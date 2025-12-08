@@ -15,7 +15,7 @@ A beautiful, modern family tree management application built with React and Node
 ### 👨‍👩‍👧‍👦 **Family Tree Visualization**
 - **Hierarchical Layout**: Grandparents → Parents → You & Siblings → Children
 - **Smart Positioning**: Siblings appear alongside you with connection lines
-- **Relationship Mapping**: Father, Mother, Spouse, and Child relationships
+- **Relationship Mapping**: Father, Mother, Brother, Sister, Spouse, and Child relationships
 - **Interactive Cards**: Click + buttons to add family members
 
 ### 🖼️ **Advanced Image Handling**
@@ -180,6 +180,12 @@ Authorization: Bearer <jwt_token>
   "relativeToId": 1
 }
 ```
+
+**Supported Relation Types:**
+- `Father`, `Mother` - Parent relationships
+- `Brother`, `Sister` - Sibling relationships (share same parents)
+- `Spouse` - Marriage relationship
+- `Child` - Parent-child relationship
 
 ## 🎨 UI Components
 
