@@ -100,8 +100,9 @@ const createMember = async (req, res) => {
       case 'Brother':
       case 'Sister':
         // Find the logged-in user's member record to get their parents
+        // Siblings should share the same parents as the logged-in user
         const userMember = await client.query(
-          'SELECT id, father_id, mother_id FROM family_members WHERE tree_owner_id = $1',
+          'SELECT id, father_id, mother_id FROM family_members WHERE tree_owner_id = $1 LIMIT 1',
           [tree_owner_id]
         );
 
@@ -114,16 +115,16 @@ const createMember = async (req, res) => {
           const siblingParts = [];
 
           if (father_id) {
-            siblingParts.push('father_id = $1');
+            siblingParts.push(`father_id = $${siblingValues.length + 1}`);
             siblingValues.push(father_id);
           }
           if (mother_id) {
-            siblingParts.push('mother_id = $2');
+            siblingParts.push(`mother_id = $${siblingValues.length + 1}`);
             siblingValues.push(mother_id);
           }
 
           if (siblingParts.length > 0) {
-            siblingUpdateQuery += siblingParts.join(', ') + ' WHERE id = $' + (siblingValues.length + 1);
+            siblingUpdateQuery += siblingParts.join(', ') + ` WHERE id = $${siblingValues.length + 1}`;
             siblingValues.push(newMemberId);
 
             updateQuery = {
