@@ -1,4 +1,6 @@
 const db = require('../db');
+const fs = require('fs').promises; // For file system operations
+const path = require('path'); // For path manipulation
 
 const createMemory = async (req, res) => {
   const { title, description, memberId } = req.body;
@@ -93,9 +95,59 @@ const getMemoriesByMember = async (req, res) => {
   }
 };
 
-// Placeholder for delete and update
 const deleteMemory = async (req, res) => {
-    res.status(501).json({ message: 'Not implemented' });
+  const { id } = req.params; // Memory ID
+  const tree_owner_id = req.user.userId; // From authMiddleware
+
+  const client = await db.getClient();
+
+  try {
+    await client.query('BEGIN');
+
+    // 1. Verify memory exists and belongs to the user
+    const memoryResult = await client.query(
+      'SELECT * FROM memories WHERE id = $1 AND tree_owner_id = $2',
+      [id, tree_owner_id]
+    );
+
+    if (memoryResult.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ message: 'Memory not found or unauthorized.' });
+    }
+
+    // 2. Get associated file paths
+    const filesResult = await client.query(
+      'SELECT file_url FROM memory_files WHERE memory_id = $1',
+      [id]
+    );
+    const fileUrls = filesResult.rows.map(row => row.file_url);
+
+    // 3. Delete files from file system
+    const uploadDir = path.join(__dirname, '..', 'uploads'); // Path to server/uploads
+    for (const fileUrl of fileUrls) {
+      const filePath = path.join(uploadDir, path.basename(fileUrl));
+      try {
+        await fs.unlink(filePath);
+        console.log(`Deleted file: ${filePath}`);
+      } catch (fileError) {
+        // Log error but don't stop deletion if file not found on disk
+        console.warn(`Could not delete file ${filePath}: ${fileError.message}`);
+      }
+    }
+
+    // 4. Delete from memories table (this will cascade delete from memory_files)
+    await client.query('DELETE FROM memories WHERE id = $1', [id]);
+
+    await client.query('COMMIT');
+    res.status(200).json({ message: 'Memory deleted successfully.' });
+
+  } catch (error) {
+    await client.query('ROLLBACK');
+    console.error('Error deleting memory:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  } finally {
+    client.release();
+  }
 };
 
 const updateMemory = async (req, res) => {

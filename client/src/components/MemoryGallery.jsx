@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import api from '../utils/api';
 import MemoryCard from './MemoryCard';
 import './MemoryGallery.css';
@@ -8,28 +8,37 @@ const MemoryGallery = ({ memberId, memberName, onAddMemory }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
+  const fetchMemories = useCallback(async () => {
     if (!memberId) {
       setMemories([]);
       setLoading(false);
       return;
     }
 
-    const fetchMemories = async () => {
-      setLoading(true);
-      setError('');
-      try {
-        const res = await api.get(`/memories?memberId=${memberId}`);
-        setMemories(res.data);
-      } catch (err) {
-        setError('Failed to load memories.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMemories();
+    setLoading(true);
+    setError('');
+    try {
+      const res = await api.get(`/memories?memberId=${memberId}`);
+      setMemories(res.data);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to load memories.');
+    } finally {
+      setLoading(false);
+    }
   }, [memberId]);
+
+  useEffect(() => {
+    fetchMemories();
+  }, [fetchMemories]);
+
+  const handleDeleteMemory = async (memoryId) => {
+    try {
+      await api.delete(`/memories/${memoryId}`);
+      fetchMemories(); // Re-fetch memories to update the list
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to delete memory.');
+    }
+  };
 
   return (
     <div className="memory-gallery-container">
@@ -43,7 +52,9 @@ const MemoryGallery = ({ memberId, memberName, onAddMemory }) => {
         {!loading && !error && (
           <>
             {memories.length > 0 ? (
-              memories.map(memory => <MemoryCard key={memory.id} memory={memory} />)
+              memories.map(memory => (
+                <MemoryCard key={memory.id} memory={memory} onDelete={handleDeleteMemory} />
+              ))
             ) : (
               <div className="memory-card-placeholder">
                 <p>No memories yet for {memberName}. Start by adding one!</p>
@@ -57,3 +68,4 @@ const MemoryGallery = ({ memberId, memberName, onAddMemory }) => {
 };
 
 export default MemoryGallery;
+
