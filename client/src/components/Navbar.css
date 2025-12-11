@@ -74,19 +74,21 @@
   border-radius: 8px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  width: 180px;
+  width: 200px; /* Increased width for more content */
   border: 1px solid #f0f0f0;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
 }
 
 .dropdown-item {
   display: block;
   width: 100%;
-  padding: 0.8rem 1rem;
+  padding: 0.8rem 1.2rem; /* Adjusted padding */
   border: none;
   background: none;
   text-align: left;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 0.95rem; /* Slightly smaller font */
   font-family: 'Poppins', sans-serif;
   color: #333;
   transition: background-color 0.3s ease;
@@ -98,7 +100,45 @@
   background-color: #f5f5f5;
 }
 
+.dropdown-user-info {
+  padding: 0.5rem 1.2rem;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 0.5rem;
+  display: none; /* Hide on desktop by default */
+}
+
+.dropdown-user-info .user-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.dropdown-user-info .user-email {
+  font-size: 0.8rem;
+}
+
+
 .navbar-logo {
   height: 40px; /* Adjust as needed */
   display: block; /* Removes extra space below the image */
+}
+
+
+/* --- Responsive Styles for Mobile --- */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0.8rem 1.5rem; /* Reduce padding on mobile */
+  }
+
+  /* Hide user details next to the picture in the main bar */
+  .navbar-user .user-details {
+    display: none;
+  }
+
+  .user-profile-img {
+    margin-right: 0; /* Remove margin since details are hidden */
+  }
+
+  /* Show user details inside the dropdown on mobile */
+  .dropdown-user-info {
+    display: block;
+  }
 }

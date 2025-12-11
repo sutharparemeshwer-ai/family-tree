@@ -41,6 +41,10 @@ const Navbar = () => {
           </div>
           {dropdownVisible && (
             <div className="user-dropdown">
+              <div className="dropdown-user-info">
+                <span className="user-name">{user.first_name} {user.last_name}</span>
+                <span className="user-email">{user.email}</span>
+              </div>
               <Link to="/settings" className="dropdown-item">Profile Settings</Link>
               <button onClick={handleLogout} className="dropdown-item">Logout</button>
             </div>

@@ -5,11 +5,20 @@
 
 .memories-content {
   display: flex;
-  height: 100vh; /* Set container to full viewport height */
+  height: 100vh;
+  position: relative; /* For mobile sidebar overlay */
 }
 
 .memory-gallery-main {
-  flex: 1;
+  flex-grow: 1;
   overflow-y: auto;
-  padding-top: 120px; /* Add padding to push gallery content below navbar */
+  padding: 2rem;
+  padding-top: 120px;
+}
+
+/* On mobile, the main content takes full width as sidebar is an overlay */
+@media (max-width: 768px) {
+  .memory-gallery-main {
+    width: 100%;
+  }
 }

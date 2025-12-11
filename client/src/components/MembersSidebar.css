@@ -1,5 +1,5 @@
+/* --- Default (Desktop) Styles --- */
 .members-sidebar {
-  top: 0%;
   width: 280px;
   background-color: #ffffff;
   border-right: 1px solid #e0e0e0;
@@ -7,18 +7,24 @@
   flex-direction: column;
   height: 100%;
   box-sizing: border-box;
+  padding-top: 10px;
+  flex-shrink: 0; /* Prevent sidebar from shrinking */
+}
+
+.sidebar-toggle-btn {
+  display: none; /* Hidden on desktop */
 }
 
 .sidebar-header {
   padding: 1.5rem;
-  padding-top: 40px; /* Add space for the fixed navbar */
   border-bottom: 1px solid #e0e0e0;
 }
 
 .sidebar-header h3 {
-  margin: 0 0 1rem 0;
+  margin: 0 0 2rem 0;
   font-size: 1.2rem;
   color: #333;
+  white-space: nowrap;
 }
 
 .sidebar-search {
@@ -32,6 +38,7 @@
 
 .members-list-container {
   overflow-y: auto;
+  overflow-x: hidden;
   flex-grow: 1;
 }
 
@@ -49,6 +56,7 @@
   cursor: pointer;
   border-bottom: 1px solid #f0f0f0;
   transition: background-color 0.2s ease;
+  white-space: nowrap;
 }
 
 .member-item:hover {
@@ -66,6 +74,7 @@
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
+  flex-shrink: 0;
 }
 
 .member-name {
@@ -80,4 +89,43 @@
 
 .sidebar-message.error {
   color: #d93025;
+}
+
+
+/* --- Mobile-only styles --- */
+@media (max-width: 768px) {
+  .members-sidebar {
+    position: absolute;
+    z-index: 100;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    transform: translateX(0);
+  }
+
+  .members-sidebar.collapsed {
+    transform: translateX(-100%);
+  }
+
+  .sidebar-toggle-btn {
+    display: flex;
+    position: absolute;
+    top: 120px;
+    right: -15px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #4CAF50;
+    color: white;
+    border: 2px solid white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 101;
+    transition: transform 0.3s ease;
+  }
+
+  .members-sidebar.collapsed .sidebar-toggle-btn {
+    transform: rotate(180deg);
+  }
 }

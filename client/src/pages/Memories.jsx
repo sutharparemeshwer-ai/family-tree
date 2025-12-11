@@ -7,16 +7,17 @@ import MemoryFormModal from '../components/MemoryFormModal';
 import './Memories.css';
 
 const Memories = () => {
-  const { memberId: urlMemberId } = useParams(); // Rename to avoid confusion
+  const { memberId: urlMemberId } = useParams();
   const navigate = useNavigate();
   const [members, setMembers] = useState([]);
   const [selectedMember, setSelectedMember] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [refreshGallery, setRefreshGallery] = useState(false);
+  // Collapse by default on mobile, but not on desktop
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(window.innerWidth < 768);
 
   const handleMembersLoad = useCallback((loadedMembers) => {
     setMembers(loadedMembers);
-    // If no member is selected via URL, select the first one by default
     if (!urlMemberId && loadedMembers.length > 0) {
       navigate(`/memories/${loadedMembers[0].id}`);
     }
@@ -34,10 +35,14 @@ const Memories = () => {
 
   const handleMemberSelect = (id) => {
     navigate(`/memories/${id}`);
+    // On mobile, collapse the sidebar after selection for a better UX
+    if (window.innerWidth < 768) {
+      setIsSidebarCollapsed(true);
+    }
   };
 
   const handleMemoryAdded = () => {
-    setRefreshGallery(prev => !prev); // Toggle to trigger refresh
+    setRefreshGallery(prev => !prev);
   };
 
   return (
@@ -45,14 +50,16 @@ const Memories = () => {
       <Navbar />
       <div className="memories-content">
         <MembersSidebar
-          selectedMemberId={parseInt(urlMemberId, 10)} // Pass parsed ID
+          selectedMemberId={parseInt(urlMemberId, 10)}
           onMemberSelect={handleMemberSelect}
           onMembersLoad={handleMembersLoad}
+          isCollapsed={isSidebarCollapsed}
+          onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
         />
         <main className="memory-gallery-main">
             {urlMemberId ? (
                 <MemoryGallery
-                    key={refreshGallery} // Force re-render on change
+                    key={refreshGallery}
                     memberId={parseInt(urlMemberId, 10)}
                     memberName={`${selectedMember?.first_name || ''} ${selectedMember?.last_name || ''}`}
                     onAddMemory={() => setIsModalOpen(true)}

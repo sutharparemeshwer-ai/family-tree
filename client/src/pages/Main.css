@@ -142,3 +142,30 @@
   background-color: rgba(144, 238, 144, 0.5); /* Slightly less transparent on hover */
   box-shadow: 0 6px 20px rgba(144, 238, 144, 0.4); /* Adjust shadow color */
 }
+
+@media (max-width: 768px) {
+  .hero-section {
+    align-items: flex-start; /* Align content block to the left */
+    padding: 0 2rem; /* Add horizontal padding */
+  }
+
+  .hero-content-wrapper {
+    align-items: flex-start; /* Align items inside the wrapper to the left */
+    text-align: left; /* Align the text itself to the left */
+  }
+
+  .hero-title {
+    font-size: 2.8rem;
+    line-height: 1.2;
+  }
+
+  .hero-subtitle {
+    font-size: 1.2rem;
+  }
+
+  .hero-cta-container {
+    flex-direction: column;
+    align-items: flex-start; /* Align buttons to the left */
+    gap: 1rem;
+  }
+}

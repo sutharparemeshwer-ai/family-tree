@@ -2,7 +2,13 @@ import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
 import './MembersSidebar.css';
 
-const MembersSidebar = ({ onMemberSelect, selectedMemberId, onMembersLoad }) => {
+const ChevronLeft = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="15 18 9 12 15 6"></polyline>
+  </svg>
+);
+
+const MembersSidebar = ({ onMemberSelect, selectedMemberId, onMembersLoad, isCollapsed, onToggle }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
@@ -31,7 +37,10 @@ const MembersSidebar = ({ onMemberSelect, selectedMemberId, onMembersLoad }) => 
   const serverUrl = 'http://localhost:5000';
 
   return (
-    <aside className="members-sidebar">
+    <aside className={`members-sidebar ${isCollapsed ? 'collapsed' : ''}`}>
+      <button className="sidebar-toggle-btn" onClick={onToggle}>
+        <ChevronLeft />
+      </button>
       <div className="sidebar-header">
         <h2>Family Members</h2>
         <input

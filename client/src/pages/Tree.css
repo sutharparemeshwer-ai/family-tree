@@ -5,11 +5,12 @@
 .tree-content {
   padding-top: 120px; /* Pushes content below the fixed navbar */
   display: flex;
-  justify-content: center;
-  align-items: center; /* Align items to the center for vertical centering */
+  justify-content: flex-start; /* Default: Align the scrollable area to the left */
+  align-items: flex-start; /* Align to top */
   min-height: 100vh;
   box-sizing: border-box;
   padding-bottom: 2rem; /* Add some padding at the bottom */
+  width: 100%; /* Ensure the content area takes full width */
 }
 
 .tree-visualization {
@@ -267,43 +268,18 @@
   border-radius: 8px;
 }
 
-/* Responsive design */
 @media (max-width: 768px) {
-  .generation-row {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .user-siblings-row {
-    flex-direction: row;
-    justify-content: flex-start;
-    flex-wrap: nowrap;
-    overflow-x: scroll;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .user-siblings-row > * {
-    min-width: 180px;
-  }
-
-  .siblings-group {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-  }
-
-  .user-spouse-container {
-    flex-direction: column;
-    width: 100%;
-    max-width: 100%;
-    margin-top: 1rem;
-  }
-
-  .user-spouse-container .member-card {
-    width: 100%;
-    max-width: 100%;
+  .tree-content {
+    justify-content: flex-end; /* Align content to the right on mobile */
+     /* Add some space on the right edge */
+     height: auto;
   }
 
   .family-tree {
-    gap: 2rem;
+    transform: scale(0.6);
+    transform-origin: top left;
+    /* Adjust margin to compensate for the transform and reduce excess scrollable space */
+    margin-right: -1150px; 
   }
+   
 }
