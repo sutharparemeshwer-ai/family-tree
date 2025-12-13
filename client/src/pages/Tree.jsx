@@ -22,6 +22,7 @@ import ShareModal from '../components/ShareModal';
 import FamilyNode from '../components/FamilyNode';
 import api from '../utils/api';
 import { getLayoutedElements } from '../utils/treeLayout';
+import { generateFamilyBook } from '../utils/bookGenerator';
 import './Tree.css';
 
 const nodeTypes = {
@@ -152,18 +153,24 @@ const Tree = () => {
     await fetchFamilyMembers();
   };
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     const flowElement = document.querySelector('.react-flow');
     if (flowElement) {
+      // Add printing class to hide UI elements
+      flowElement.classList.add('printing-mode');
+      
+      // Wait a moment for styles to apply
+      await new Promise(resolve => setTimeout(resolve, 100));
+
       toPng(flowElement, {
         filter: (node) => {
-          // Exclude controls and minimap from the screenshot
           return (
             !node.classList?.contains('react-flow__controls') &&
             !node.classList?.contains('react-flow__minimap')
           );
         },
         backgroundColor: '#f5f7fa',
+        pixelRatio: 3, // HD Quality
         style: {
           width: '100%',
           height: '100%',
@@ -171,6 +178,46 @@ const Tree = () => {
       })
       .then((dataUrl) => {
         download(dataUrl, 'my-family-tree.png');
+      })
+      .finally(() => {
+        // Remove printing class
+        flowElement.classList.remove('printing-mode');
+      });
+    }
+  };
+
+  const handleGenerateBook = async () => {
+    setSuccessMessage('Generating Family Book... Please wait.');
+    
+    const flowElement = document.querySelector('.react-flow');
+    if (flowElement) {
+      flowElement.classList.add('printing-mode');
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      toPng(flowElement, {
+        filter: (node) => {
+          return (
+            !node.classList?.contains('react-flow__controls') &&
+            !node.classList?.contains('react-flow__minimap')
+          );
+        },
+        backgroundColor: '#f5f7fa',
+        pixelRatio: 2, // Slightly lower than download to avoid massive PDF size
+        style: {
+          width: '100%',
+          height: '100%',
+        }
+      })
+      .then(async (treeImageBase64) => {
+        await generateFamilyBook(familyMembers, treeImageBase64, user, serverUrl);
+        setSuccessMessage('Family Book generated successfully!');
+      })
+      .catch((err) => {
+        console.error('Error generating book:', err);
+        setMembersError('Failed to generate book.');
+      })
+      .finally(() => {
+        flowElement.classList.remove('printing-mode');
       });
     }
   };
@@ -184,6 +231,7 @@ const Tree = () => {
         <ActionBar 
           onDownload={handleDownload} 
           onShare={() => setShareModalOpen(true)} 
+          onGenerateBook={handleGenerateBook}
         />
       )}
 

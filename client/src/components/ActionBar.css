@@ -46,6 +46,15 @@
   background-color: #c8e6c9;
 }
 
+.book-btn {
+  background-color: #f3e5f5;
+  color: #7b1fa2; /* Purple */
+}
+
+.book-btn:hover {
+  background-color: #e1bee7;
+}
+
 .icon {
   font-size: 1.1rem;
 }
