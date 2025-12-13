@@ -156,12 +156,19 @@
   display: none !important;
 }
 
-.printing-mode .react-flow__edge-path {
-  stroke: #aaa !important; /* Lighter edge color */
-  stroke-opacity: 0.6;
+/* Printing Mode - Clean Export Styles */
+.printing-mode .node-add-btn,
+.printing-mode .react-flow__handle {
+  display: none !important;
 }
 
-/* Ensure edges are distinct but lighter */
+.printing-mode .react-flow__edge-path {
+  stroke: #333 !important; /* Dark Gray Edge Color */
+  stroke-width: 2px;
+  stroke-opacity: 1;
+}
+
+/* Ensure edges are distinct */
 .printing-mode .react-flow__edge {
   z-index: 0; 
 }
