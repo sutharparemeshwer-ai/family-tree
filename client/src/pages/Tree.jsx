@@ -8,7 +8,8 @@ import ReactFlow, {
   addEdge,
   ConnectionLineType,
   useReactFlow,
-  ReactFlowProvider
+  ReactFlowProvider,
+  Panel // Import Panel here
 } from 'reactflow';
 import { toPng } from 'html-to-image';
 import download from 'downloadjs';
@@ -30,40 +31,108 @@ const nodeTypes = {
 };
 
 // Internal component to use ReactFlow hooks
-const TreeVisualizer = ({ familyMembers, serverUrl, onAddRelative }) => {
+const TreeVisualizer = ({ familyMembers, serverUrl, onAddRelative, user }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const { fitView, getNodes } = useReactFlow();
+  const { fitView, setCenter, zoomTo } = useReactFlow();
+  
+  // Search State
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [highlightedId, setHighlightedId] = useState(null);
 
-  // Compute Layout
+  // 1. Initial Layout Calculation (Run only when family members change)
   useEffect(() => {
     if (familyMembers.length > 0) {
       const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(familyMembers);
 
-      const nodesWithData = layoutedNodes.map((node) => {
+      // Initialize nodes with base data
+      const initialNodes = layoutedNodes.map((node) => {
         if (node.type === 'familyMember') {
           return {
             ...node,
             data: { 
               ...node.data, 
               serverUrl, 
-              onAddRelative 
+              onAddRelative,
+              isHighlighted: false // Default
             },
+            style: {} // Default
           };
         }
         return node;
       });
 
-      setNodes(nodesWithData);
+      setNodes(initialNodes);
       setEdges(layoutedEdges);
       
-      // Delay fitView slightly to allow render
+      // Fit view only on data load
       setTimeout(() => fitView({ padding: 0.2 }), 50);
     } else {
         setNodes([]);
         setEdges([]);
     }
-  }, [familyMembers, serverUrl, onAddRelative, setNodes, setEdges, fitView]);
+  }, [familyMembers, serverUrl, onAddRelative, setNodes, setEdges, fitView]); // Removed highlightedId
+
+  // 2. Handle Highlighting (Run when highlightedId changes)
+  useEffect(() => {
+    setNodes((nds) => 
+      nds.map((node) => {
+        // Only update styling for familyMember nodes
+        if (node.type === 'familyMember') {
+          const isHighlighted = node.id === highlightedId;
+          
+          // Optimization: If state matches, don't return new object (React Flow might compare)
+          // But strict comparison is complex, so we just return new object.
+          return {
+            ...node,
+            data: {
+              ...node.data,
+              isHighlighted,
+            },
+            style: isHighlighted ? { 
+              boxShadow: '0 0 25px 8px rgba(76, 175, 80, 0.8)', 
+              borderColor: '#4CAF50',
+              borderWidth: '2px',
+              zIndex: 1000,
+              transition: 'box-shadow 0.3s ease, border-color 0.3s ease'
+            } : {} // Reset style if not highlighted
+          };
+        }
+        return node;
+      })
+    );
+  }, [highlightedId, setNodes]);
+
+  // Handle Search Input
+  const handleSearch = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    if (query.trim()) {
+      const results = familyMembers.filter(member => 
+        `${member.first_name} ${member.last_name || ''}`.toLowerCase().includes(query.toLowerCase()) ||
+        (member.nickname && member.nickname.toLowerCase().includes(query.toLowerCase()))
+      );
+      setSearchResults(results.slice(0, 5)); // Limit to 5
+    } else {
+      setSearchResults([]);
+    }
+  };
+
+  // Fly To Member
+  const flyToMember = (member) => {
+    const node = nodes.find(n => n.id === member.id.toString());
+    if (node) {
+      const { x, y } = node.position;
+      // Fly animation
+      setCenter(x + 100, y + 75, { zoom: 1.5, duration: 1500 }); // Center on node center (approx)
+      setHighlightedId(member.id.toString());
+      setSearchQuery('');
+      setSearchResults([]);
+      
+      // Highlight persists until user clicks elsewhere
+    }
+  };
 
   return (
     <ReactFlow
@@ -75,6 +144,7 @@ const TreeVisualizer = ({ familyMembers, serverUrl, onAddRelative }) => {
       fitView
       minZoom={0.1}
       attributionPosition="bottom-right"
+      onPaneClick={() => setHighlightedId(null)} // Clear highlight on click background
     >
       <Controls />
       <MiniMap nodeStrokeColor={(n) => {
@@ -82,6 +152,38 @@ const TreeVisualizer = ({ familyMembers, serverUrl, onAddRelative }) => {
         return '#eee';
       }} />
       <Background color="#aaa" gap={16} />
+      
+      {/* Title Overlay */}
+      <Panel position="top-center" className="tree-title-overlay">
+        The {user?.last_name || 'Family'} Lineage
+      </Panel>
+
+      {/* Search Bar Overlay */}
+      <Panel position="top-left" style={{ top: 80 }} className="search-panel">
+        <div className="search-container">
+          <input 
+            type="text" 
+            placeholder="Search family..." 
+            value={searchQuery}
+            onChange={handleSearch}
+            className="search-input"
+          />
+          {searchResults.length > 0 && (
+            <div className="search-results">
+              {searchResults.map(result => (
+                <div 
+                  key={result.id} 
+                  className="search-result-item"
+                  onClick={() => flyToMember(result)}
+                >
+                  <div className="result-name">{result.first_name} {result.last_name}</div>
+                  {result.nickname && <div className="result-nick">({result.nickname})</div>}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </Panel>
     </ReactFlow>
   );
 };
@@ -254,6 +356,7 @@ const Tree = () => {
                     familyMembers={familyMembers}
                     serverUrl={serverUrl}
                     onAddRelative={handleAddRelative}
+                    user={user} // Pass the user prop here
                   />
                 </ReactFlowProvider>
               </div>
