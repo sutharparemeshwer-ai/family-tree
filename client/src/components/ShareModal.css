@@ -1,0 +1,141 @@
+.share-modal {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 450px;
+  position: relative;
+  text-align: center;
+  animation: slideUp 0.3s ease-out;
+}
+
+.share-modal h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Close Button Styling - Professional Round Button */
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: #f5f5f5;
+  border: none;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: #666;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  background: #e0e0e0;
+  color: #333;
+  transform: rotate(90deg);
+}
+
+.share-options {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  background: #f5f7fa;
+  padding: 10px 16px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.toggle-label:hover {
+  background: #ebedf0;
+}
+
+.toggle-text {
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.generate-btn {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.2s;
+}
+
+.generate-btn:hover {
+  background: #43a047;
+}
+
+.generate-btn:disabled {
+  background: #a5d6a7;
+  cursor: not-allowed;
+}
+
+.link-result {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.link-result input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #f9f9f9;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.copy-btn {
+  background: #2196F3;
+  color: white;
+  border: none;
+  padding: 0 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.copy-btn:hover {
+  background: #1976D2;
+}
+
+.copy-btn.copied {
+  background: #4CAF50;
+}
+
+.modal-hint {
+  font-size: 0.85rem;
+  color: #888;
+  margin-top: 16px;
+}
+
+.error-text {
+  color: #f44336;
+  margin-bottom: 16px;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}

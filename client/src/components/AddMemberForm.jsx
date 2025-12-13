@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import api from '../utils/api'; // Import the api utility
+import axios from 'axios';
 import './AddMemberForm.css';
 
 const UploadIcon = () => (
@@ -10,7 +11,7 @@ const UploadIcon = () => (
   </svg>
 );
 
-const AddMemberForm = ({ relationType, onCancel, relativeToId, onMemberAdded }) => {
+const AddMemberForm = ({ relationType, onCancel, relativeToId, onMemberAdded, customEndpoint }) => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -55,19 +56,26 @@ const AddMemberForm = ({ relationType, onCancel, relativeToId, onMemberAdded }) 
     }
 
     try {
-      const res = await api.post('/members', data, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      console.log(res.data);
+      let res;
+      if (customEndpoint) {
+        // Use direct axios call for shared view
+        res = await axios.post(customEndpoint, data, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
+      } else {
+        // Use api utility for standard authenticated view
+        res = await api.post('/members', data, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+        });
+      }
+      
       if (onMemberAdded) {
         onMemberAdded(res.data.message || 'Member added successfully!');
       } else {
         onCancel(); // Fallback to just closing modal
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'An error occurred.');
+      setError(err.response?.data?.message || err.response?.data?.error || 'An error occurred.');
     } finally {
       setLoading(false);
     }

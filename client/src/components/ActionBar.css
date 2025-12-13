@@ -1,0 +1,51 @@
+.action-bar {
+  display: flex;
+  gap: 12px;
+  background: white;
+  padding: 10px 16px;
+  border-radius: 50px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  position: absolute;
+  top: 90px; /* Below Navbar */
+  right: 20px;
+  z-index: 100; /* Above React Flow */
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+  font-size: 0.9rem;
+}
+
+.action-btn:hover {
+  transform: translateY(-2px);
+}
+
+.download-btn {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.download-btn:hover {
+  background-color: #bbdefb;
+}
+
+.share-btn {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.share-btn:hover {
+  background-color: #c8e6c9;
+}
+
+.icon {
+  font-size: 1.1rem;
+}
