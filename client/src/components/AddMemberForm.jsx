@@ -17,6 +17,8 @@ const AddMemberForm = ({ relationType, onCancel, relativeToId, onMemberAdded, cu
     lastName: '',
     nickname: '',
     description: '',
+    birthDate: '',
+    anniversaryDate: ''
   });
   const [profileImage, setProfileImage] = useState(null);
   const [preview, setPreview] = useState('');
@@ -46,6 +48,9 @@ const AddMemberForm = ({ relationType, onCancel, relativeToId, onMemberAdded, cu
     data.append('lastName', formData.lastName);
     data.append('nickname', formData.nickname);
     data.append('description', formData.description);
+    if (formData.birthDate) data.append('birthDate', formData.birthDate);
+    if (formData.anniversaryDate) data.append('anniversaryDate', formData.anniversaryDate);
+    
     if (profileImage) {
       data.append('profileImage', profileImage);
     }
@@ -93,6 +98,18 @@ const AddMemberForm = ({ relationType, onCancel, relativeToId, onMemberAdded, cu
             <input type="text" name="lastName" placeholder="Last Name" onChange={handleInputChange} />
           </div>
           <input type="text" name="nickname" placeholder="Nickname" onChange={handleInputChange} />
+          
+          <div className="form-row">
+            <div className="date-input-group">
+              <label>Date of Birth</label>
+              <input type="date" name="birthDate" onChange={handleInputChange} />
+            </div>
+            <div className="date-input-group">
+              <label>Anniversary (Optional)</label>
+              <input type="date" name="anniversaryDate" onChange={handleInputChange} />
+            </div>
+          </div>
+
           <textarea name="description" placeholder="Description" onChange={handleInputChange}></textarea>
         </div>
 

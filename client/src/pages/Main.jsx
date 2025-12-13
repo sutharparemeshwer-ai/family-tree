@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import EventsWidget from '../components/EventsWidget';
 import './Main.css';
 
 const MemoriesIcon = () => (
@@ -43,6 +44,8 @@ const Main = () => {
               Make Memories
             </button>
           </div>
+          
+          <EventsWidget />
         </div>
       </section>
     </div>

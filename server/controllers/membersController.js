@@ -31,8 +31,8 @@ const createMember = async (req, res) => {
     }
     
     const insertQuery = `
-      INSERT INTO family_members(tree_owner_id, first_name, last_name, nickname, profile_img_url, description, gender)
-      VALUES($1, $2, $3, $4, $5, $6, $7)
+      INSERT INTO family_members(tree_owner_id, first_name, last_name, nickname, profile_img_url, description, gender, birth_date, anniversary_date)
+      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)
       RETURNING id;
     `;
     const newMemberResult = await client.query(insertQuery, [
@@ -43,6 +43,8 @@ const createMember = async (req, res) => {
       profile_img_url,
       description,
       gender,
+      req.body.birthDate || null,
+      req.body.anniversaryDate || null
     ]);
     const newMemberId = newMemberResult.rows[0].id;
 
@@ -199,8 +201,79 @@ const getMembers = async (req, res) => {
   }
 };
 
+const getUpcomingEvents = async (req, res) => {
+  const tree_owner_id = req.user.userId;
+
+  try {
+    const result = await db.query(
+      'SELECT id, first_name, last_name, birth_date, anniversary_date, profile_img_url FROM family_members WHERE tree_owner_id = $1',
+      [tree_owner_id]
+    );
+
+    const members = result.rows;
+    const events = [];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    members.forEach(member => {
+      // Calculate Next Birthday
+      if (member.birth_date) {
+        const birthDate = new Date(member.birth_date);
+        let nextBirthDate = new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate());
+        if (nextBirthDate < today) {
+          nextBirthDate.setFullYear(today.getFullYear() + 1);
+        }
+        
+        events.push({
+          id: member.id,
+          memberId: member.id,
+          name: `${member.first_name} ${member.last_name || ''}`,
+          type: 'Birthday',
+          date: nextBirthDate,
+          originalDate: member.birth_date,
+          profileImgUrl: member.profile_img_url,
+          age: nextBirthDate.getFullYear() - birthDate.getFullYear()
+        });
+      }
+
+      // Calculate Next Anniversary
+      if (member.anniversary_date) {
+        const annivDate = new Date(member.anniversary_date);
+        let nextAnnivDate = new Date(today.getFullYear(), annivDate.getMonth(), annivDate.getDate());
+        if (nextAnnivDate < today) {
+          nextAnnivDate.setFullYear(today.getFullYear() + 1);
+        }
+
+        events.push({
+          id: `${member.id}-anniv`,
+          memberId: member.id,
+          name: `${member.first_name} ${member.last_name || ''}`,
+          type: 'Anniversary',
+          date: nextAnnivDate,
+          originalDate: member.anniversary_date,
+          profileImgUrl: member.profile_img_url,
+          years: nextAnnivDate.getFullYear() - annivDate.getFullYear()
+        });
+      }
+    });
+
+    // Sort by Date (ascending)
+    events.sort((a, b) => a.date - b.date);
+
+    // Take top 5
+    const upcomingEvents = events.slice(0, 5);
+
+    res.json(upcomingEvents);
+
+  } catch (error) {
+    console.error('Error fetching upcoming events:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
 module.exports = {
   createMember,
   getMembers,
+  getUpcomingEvents
 };
 

@@ -33,4 +33,8 @@ router.post(
 // This route is protected and fetches all family members for the logged-in user
 router.get('/', authMiddleware, membersController.getMembers);
 
+// GET /api/members/events
+// Fetch upcoming birthdays and anniversaries
+router.get('/events', authMiddleware, membersController.getUpcomingEvents);
+
 module.exports = router;
