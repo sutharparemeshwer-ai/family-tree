@@ -62,6 +62,7 @@ const MemoryViewerModal = ({ isOpen, onClose, memory, serverUrl }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className="memory-viewer-modal-content">
+        <button className="modal-close-btn" onClick={onClose}>&times;</button>
         {/* Left: Media */}
         <div className="memory-details-section">
           <div className="memory-media-grid">

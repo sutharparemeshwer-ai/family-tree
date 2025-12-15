@@ -7,6 +7,7 @@
   width: 100%;
   max-width: 600px;
   animation: slideUp 0.5s ease-out;
+  box-sizing: border-box; /* Prevent padding from causing overflow */
 }
 
 .events-title {
@@ -76,18 +77,25 @@
 
 .event-details {
   flex: 1;
+  min-width: 0; /* Enable text truncation in flex child */
 }
 
 .event-name {
   font-weight: 600;
   color: #333;
   font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .event-type {
   font-size: 0.85rem;
   color: #666;
   margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .event-days {
@@ -97,6 +105,8 @@
   background: #E3F2FD;
   padding: 4px 10px;
   border-radius: 20px;
+  white-space: nowrap;
+  margin-left: 8px;
 }
 
 .event-days.today {
@@ -114,4 +124,32 @@
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive Styles */
+@media (max-width: 480px) {
+  .events-widget {
+    padding: 15px;
+    width: 95%; /* Ensure it fits within screen with margins */
+    transform: translateX(-10px); /* Move slightly left */
+  }
+
+  .event-item {
+    padding: 8px;
+  }
+
+  .event-date {
+    margin-right: 10px;
+    min-width: 40px;
+    padding: 4px 8px;
+  }
+
+  .event-date .day {
+    font-size: 1rem;
+  }
+
+  .event-days {
+    font-size: 0.8rem;
+    padding: 3px 8px;
+  }
 }

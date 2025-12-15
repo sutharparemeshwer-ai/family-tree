@@ -174,3 +174,25 @@
 .printing-mode .react-flow__edge {
   z-index: 0; 
 }
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .search-panel {
+    top: 100px !important; /* Force top position */
+    left: 50% !important;
+    transform: translateX(-50%);
+    margin: 0;
+    width: 90%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .search-container {
+    width: 100%;
+    max-width: 350px;
+  }
+  
+  .tree-title-overlay {
+    display: none !important; /* Hide title on mobile */
+  }
+}

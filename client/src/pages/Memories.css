@@ -13,3 +13,9 @@
   overflow-y: auto;
   padding-top: 120px; /* Add padding to push gallery content below navbar */
 }
+
+@media (max-width: 768px) {
+  .memory-gallery-main {
+    padding-top: 100px;
+  }
+}

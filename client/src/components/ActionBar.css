@@ -58,3 +58,31 @@
 .icon {
   font-size: 1.1rem;
 }
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .action-bar {
+    top: auto;
+    bottom: 30px; /* Move to bottom on mobile */
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: 90%;
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .action-btn {
+    padding: 8px; /* Reduce padding */
+  }
+  
+  .action-btn span:not(.icon) {
+    display: none; /* Hide text, show only icon on small screens */
+  }
+  
+  .action-btn {
+    gap: 0;
+  }
+}

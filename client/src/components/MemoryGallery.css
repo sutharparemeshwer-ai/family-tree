@@ -55,3 +55,30 @@
 .error-message {
     color: #d93025;
 }
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .memory-gallery-container {
+    padding: 1rem;
+  }
+
+  .gallery-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .gallery-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .add-memory-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .memory-grid {
+    grid-template-columns: 1fr; /* Single column on mobile for better view */
+    gap: 1rem;
+  }
+}

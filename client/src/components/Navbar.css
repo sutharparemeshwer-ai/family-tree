@@ -102,3 +102,28 @@
   height: 40px; /* Adjust as needed */
   display: block; /* Removes extra space below the image */
 }
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .navbar {
+    width: 95%;
+    padding: 0.6rem 1rem;
+    top: 10px;
+  }
+  
+  .navbar-brand-link {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-details {
+    display: none; /* Hide name/email on very small screens */
+  }
+
+  .user-profile-img {
+    margin-right: 0;
+    width: 38px;
+    height: 38px;
+  }
+}

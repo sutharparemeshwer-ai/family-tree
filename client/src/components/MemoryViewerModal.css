@@ -14,6 +14,30 @@
   transform: translateX(-80px);
 }
 
+.modal-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(255, 255, 255, 0.8);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 100;
+  font-size: 1.5rem;
+  color: #333;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  transition: background 0.2s;
+}
+
+.modal-close-btn:hover {
+  background: white;
+}
+
 /* --- Left Side: Media Stage --- */
 .memory-details-section {
   flex: 1.5;
@@ -265,5 +289,11 @@
   .comments-section {
     max-width: none;
     min-width: 0;
+  }
+
+  .modal-close-btn {
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.9); /* More opaque on mobile */
   }
 }
