@@ -42,6 +42,8 @@ const ProfileSelector = ({ isOpen, onClose, onProfileSelected }) => {
   const filteredMembers = familyMembers.filter(member => 
     `${member.first_name} ${member.last_name || ''}`.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  
+  const serverUrl = process.env.REACT_APP_SERVER_URL || 'http://localhost:5000';
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} disableClose={true}>
@@ -78,7 +80,7 @@ const ProfileSelector = ({ isOpen, onClose, onProfileSelected }) => {
                 onClick={() => handleSelectProfile(member)}
               >
                 <img 
-                  src={member.profile_img_url ? `http://localhost:5000${member.profile_img_url}` : 'https://via.placeholder.com/100'} 
+                  src={member.profile_img_url ? `${serverUrl}${member.profile_img_url}` : 'https://via.placeholder.com/100'} 
                   alt={member.first_name} 
                   className="profile-avatar" 
                 />

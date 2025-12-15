@@ -8,7 +8,7 @@ const MemoryGallery = ({ memberId, memberName, onAddMemory }) => {
   const [memories, setMemories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const serverUrl = 'http://localhost:5000'; // Define serverUrl here
+  const serverUrl = process.env.REACT_APP_SERVER_URL || 'http://localhost:5000';
 
   // State for Memory Viewer Modal
   const [isViewerModalOpen, setIsViewerModalOpen] = useState(false);

@@ -80,7 +80,8 @@ const Signup = () => {
     }
 
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/signup', data, {
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+      const res = await axios.post(`${apiUrl}/auth/signup`, data, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

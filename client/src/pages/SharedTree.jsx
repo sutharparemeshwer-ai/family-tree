@@ -85,12 +85,14 @@ const SharedTree = () => {
   const [relationType, setRelationType] = useState('');
   const [relativeToId, setRelativeToId] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [highlightedId, setHighlightedId] = useState(null);
 
-  const serverUrl = 'http://localhost:5000';
+  const serverUrl = process.env.REACT_APP_SERVER_URL || 'http://localhost:5000';
 
-  const fetchSharedTree = useCallback(async () => {
+  useEffect(() => {
+    const fetchSharedTree = async () => {
     setLoading(true);
     setError('');
     try {

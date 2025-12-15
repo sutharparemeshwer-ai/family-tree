@@ -32,7 +32,7 @@ const TrashIcon = () => (
 );
 
 const MemoryCard = ({ memory, onDelete, onViewMemory }) => {
-  const serverUrl = 'http://localhost:5000';
+  const serverUrl = process.env.REACT_APP_SERVER_URL || 'http://localhost:5000';
   const firstFile = memory.files && memory.files[0];
   const videoRef = useRef(null); // Create a ref for the video element
 

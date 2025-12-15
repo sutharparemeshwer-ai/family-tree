@@ -21,7 +21,7 @@ const Navbar = () => {
     navigate('/login');
   };
 
-  const serverUrl = 'http://localhost:5000';
+  const serverUrl = process.env.REACT_APP_SERVER_URL || 'http://localhost:5000';
 
   return (
     <nav className="navbar">

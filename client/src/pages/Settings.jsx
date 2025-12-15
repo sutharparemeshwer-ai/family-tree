@@ -25,7 +25,7 @@ const Settings = () => {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const serverUrl = 'http://localhost:5000';
+  const serverUrl = process.env.REACT_APP_SERVER_URL || 'http://localhost:5000';
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem('user'));

@@ -34,7 +34,7 @@ const MembersSidebar = ({ onMemberSelect, selectedMemberId, onMembersLoad }) => 
     setIsMobileOpen(false); // Close sidebar on mobile after selection
   };
 
-  const serverUrl = 'http://localhost:5000';
+  const serverUrl = process.env.REACT_APP_SERVER_URL || 'http://localhost:5000';
 
   return (
     <>
