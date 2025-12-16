@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import api from '../utils/api';
 import './AuthShared.css';
 
 // Icons
@@ -98,7 +98,7 @@ const Signup = () => {
     }
 
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/signup', data, {
+      await api.post('/auth/signup', data, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

@@ -8,7 +8,6 @@ const MemoryViewerModal = ({ isOpen, onClose, memory, serverUrl }) => {
   const [newComment, setNewComment] = useState('');
   const [loadingComments, setLoadingComments] = useState(true);
   const [postingComment, setPostingComment] = useState(false);
-  const [error, setError] = useState('');
 
   const activeProfile = JSON.parse(localStorage.getItem('activeProfile'));
 
@@ -20,7 +19,6 @@ const MemoryViewerModal = ({ isOpen, onClose, memory, serverUrl }) => {
       setComments(res.data);
     } catch (err) {
       console.error('Error fetching comments:', err);
-      setError('Failed to load comments.');
     } finally {
       setLoadingComments(false);
     }
@@ -41,7 +39,6 @@ const MemoryViewerModal = ({ isOpen, onClose, memory, serverUrl }) => {
     }
 
     setPostingComment(true);
-    setError('');
     try {
       await api.post(`/social/memories/${memory.id}/comments`, {
         content: newComment,
@@ -51,7 +48,6 @@ const MemoryViewerModal = ({ isOpen, onClose, memory, serverUrl }) => {
       fetchComments(); // Refresh comments
     } catch (err) {
       console.error('Error posting comment:', err);
-      setError('Failed to post comment.');
     } finally {
       setPostingComment(false);
     }

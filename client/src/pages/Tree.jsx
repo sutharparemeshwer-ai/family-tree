@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import ReactFlow, { 
   Controls, 
   Background, 
   MiniMap, 
   useNodesState, 
   useEdgesState,
-  addEdge,
   ConnectionLineType,
   useReactFlow,
   ReactFlowProvider,
@@ -45,7 +44,7 @@ const defaultEdgeOptions = {
 const TreeVisualizer = ({ familyMembers, serverUrl, onAddRelative, onEdit, onDelete, user }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const { fitView, setCenter, zoomTo } = useReactFlow();
+  const { fitView, setCenter } = useReactFlow();
   
   // Search State
   const [searchQuery, setSearchQuery] = useState('');
@@ -211,7 +210,8 @@ const Tree = () => {
   const [membersError, setMembersError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  const serverUrl = 'http://localhost:5000';
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+  const serverUrl = API_URL.replace(/\/api$/, '');
 
   const fetchFamilyMembers = useCallback(async () => {
     setLoadingMembers(true);

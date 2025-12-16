@@ -21,11 +21,6 @@ const EventsWidget = () => {
     fetchEvents();
   }, []);
 
-  const formatDate = (dateString) => {
-    const options = { month: 'short', day: 'numeric', weekday: 'short' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-  };
-
   const getDaysUntil = (dateString) => {
     const today = new Date();
     today.setHours(0,0,0,0);

@@ -9,7 +9,7 @@ import ReactFlow, {
   useReactFlow,
   ReactFlowProvider
 } from 'reactflow';
-import axios from 'axios'; // Direct axios for custom route
+import api from '../utils/api';
 import 'reactflow/dist/style.css';
 
 import Modal from '../components/Modal';
@@ -79,7 +79,6 @@ const SharedTree = () => {
   const { token } = useParams();
   const [familyMembers, setFamilyMembers] = useState([]);
   const [permission, setPermission] = useState('view');
-  const [ownerId, setOwnerId] = useState(null);
   
   const [modalOpen, setModalOpen] = useState(false);
   const [relationType, setRelationType] = useState('');
@@ -88,16 +87,16 @@ const SharedTree = () => {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  const serverUrl = 'http://localhost:5000';
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+  const serverUrl = API_URL.replace(/\/api$/, '');
 
   const fetchSharedTree = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
-      const response = await axios.get(`${serverUrl}/api/share/${token}`);
+      const response = await api.get(`/share/${token}`);
       setFamilyMembers(response.data.members);
       setPermission(response.data.permission);
-      setOwnerId(response.data.ownerId);
     } catch (err) {
       console.error(err);
       setError('Invalid or expired link.');
@@ -184,7 +183,7 @@ const SharedTree = () => {
               relativeToId={relativeToId}
               onMemberAdded={handleMemberAdded}
               // We need to support custom endpoint in AddMemberForm
-              customEndpoint={`${serverUrl}/api/share/${token}/members`}
+              customEndpoint={`${API_URL}/share/${token}/members`}
            />
         </Modal>
       )}
