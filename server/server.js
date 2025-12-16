@@ -14,9 +14,20 @@ const port = process.env.PORT || 5000;
 
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, 'uploads');
+console.log('Server starting...');
+console.log('__dirname:', __dirname);
+console.log('Configured uploads directory:', uploadsDir);
+
 if (!fs.existsSync(uploadsDir)){
-    fs.mkdirSync(uploadsDir);
-    console.log('Created uploads directory at:', uploadsDir);
+    console.log('Uploads directory does not exist. Creating...');
+    try {
+        fs.mkdirSync(uploadsDir);
+        console.log('Created uploads directory successfully.');
+    } catch (err) {
+        console.error('Failed to create uploads directory:', err);
+    }
+} else {
+    console.log('Uploads directory already exists.');
 }
 
 // Middleware

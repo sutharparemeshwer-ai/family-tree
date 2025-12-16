@@ -10,7 +10,9 @@ const router = express.Router();
 // Using the same multer storage configuration as auth routes
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../uploads'));
+    const uploadPath = path.join(__dirname, '../uploads');
+    console.log(`[Multer Members] Saving file to: ${uploadPath}`);
+    cb(null, uploadPath);
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);

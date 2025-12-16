@@ -9,7 +9,9 @@ const router = express.Router();
 // Multer storage configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../uploads'));
+    const uploadPath = path.join(__dirname, '../uploads');
+    console.log(`[Multer Memories] Saving file to: ${uploadPath}`);
+    cb(null, uploadPath);
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
