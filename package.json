@@ -1,11 +1,14 @@
 {
   "name": "family-tree-app",
   "version": "1.0.0",
-  "description": "Root package.json for deployment",
+  "description": "Root package.json for deployment to platforms like Render. This helps define global scripts for build/start if Render is configured to deploy the root directory. For Render Blueprints, render.yaml is preferred.",
   "scripts": {
+    "install-client": "cd client && npm install",
+    "build-client": "cd client && npm run build",
     "install-server": "cd server && npm install",
     "start-server": "cd server && node server.js",
-    "build": "npm run install-server"
+    "build-all": "npm run install-client && npm run build-client && npm run install-server",
+    "start-all": "npm run start-server"
   },
   "dependencies": {},
   "engines": {
