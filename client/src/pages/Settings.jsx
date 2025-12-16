@@ -84,9 +84,7 @@ const Settings = () => {
     }
 
     try {
-      const res = await api.patch('/users/profile', data, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      const res = await api.patch('/users/profile', data);
 
       localStorage.setItem('user', JSON.stringify(res.data.user));
       setSuccess('Profile updated successfully! Reloading...');

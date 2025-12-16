@@ -98,11 +98,7 @@ const Signup = () => {
     }
 
     try {
-      await api.post('/auth/signup', data, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      await api.post('/auth/signup', data);
       setMessage('Account created! Redirecting to login...');
       setTimeout(() => {
         navigate('/login');

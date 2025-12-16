@@ -99,19 +99,13 @@ const AddMemberForm = ({ relationType, onCancel, relativeToId, onMemberAdded, cu
       let res;
       if (editingMember) {
         // Update existing member
-        res = await api.put(`/members/${editingMember.id}`, data, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-        });
+        res = await api.put(`/members/${editingMember.id}`, data);
       } else if (customEndpoint) {
         // Shared view add
-        res = await axios.post(customEndpoint, data, {
-            headers: { 'Content-Type': 'multipart/form-data' }
-        });
+        res = await axios.post(customEndpoint, data);
       } else {
         // Standard add
-        res = await api.post('/members', data, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-        });
+        res = await api.post('/members', data);
       }
       
       if (onMemberAdded) {

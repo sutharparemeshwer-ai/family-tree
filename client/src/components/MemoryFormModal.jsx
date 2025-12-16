@@ -38,11 +38,7 @@ const MemoryFormModal = ({ isOpen, onClose, memberId, onMemoryAdded }) => {
     });
 
     try {
-      await api.post('/memories', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      await api.post('/memories', formData);
       onMemoryAdded();
       handleClose();
     } catch (err) {
