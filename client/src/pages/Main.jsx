@@ -6,6 +6,7 @@ import EventsWidget from '../components/EventsWidget';
 import ProfileSelector from '../components/ProfileSelector';
 import NewsFeed from '../components/NewsFeed';
 import LoadingScreen from '../components/LoadingScreen'; // Import the loader
+import InstallButton from '../components/InstallButton'; // Import Install Button
 import './Main.css';
 
 // Reusing existing icons or replacing with better ones if necessary
@@ -99,6 +100,7 @@ const Main = ({ user }) => {
               <MemoriesIcon />
               Capture Memories
             </button>
+            <InstallButton />
           </div>
           
           <div className="main-widgets-container">
