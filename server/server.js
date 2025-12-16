@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
 const authRoutes = require('./routes/auth');
 const memberRoutes = require('./routes/members'); // Import members route
 const memoryRoutes = require('./routes/memories');
@@ -9,6 +11,13 @@ const socialRoutes = require('./routes/social'); // NEW
 
 const app = express();
 const port = process.env.PORT || 5000;
+
+// Ensure uploads directory exists
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)){
+    fs.mkdirSync(uploadsDir);
+    console.log('Created uploads directory at:', uploadsDir);
+}
 
 // Middleware
 app.use(cors());
