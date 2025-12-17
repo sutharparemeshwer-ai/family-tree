@@ -50,6 +50,7 @@ const TreeVisualizer = ({ familyMembers, serverUrl, onAddRelative, onEdit, onDel
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [highlightedId, setHighlightedId] = useState(null);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   // 1. Initial Layout Calculation
   useEffect(() => {
@@ -129,6 +130,7 @@ const TreeVisualizer = ({ familyMembers, serverUrl, onAddRelative, onEdit, onDel
       setHighlightedId(member.id.toString());
       setSearchQuery('');
       setSearchResults([]);
+      setIsSearchOpen(false); // Close search after selection
     }
   };
 
@@ -163,15 +165,33 @@ const TreeVisualizer = ({ familyMembers, serverUrl, onAddRelative, onEdit, onDel
       </Panel>
 
       <Panel position="top-left" style={{ top: 110 }} className="search-panel">
-        <div className="search-container">
-          <input 
-            type="text" 
-            placeholder="Search family..." 
-            value={searchQuery}
-            onChange={handleSearch}
-            className="search-input"
-          />
-          {searchResults.length > 0 && (
+        <div className={`search-container ${isSearchOpen ? 'open' : ''}`}>
+          <button 
+            className="search-toggle-btn" 
+            onClick={() => setIsSearchOpen(!isSearchOpen)}
+            title={isSearchOpen ? "Close Search" : "Search Family"}
+          >
+             {isSearchOpen ? (
+                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+             ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+             )}
+          </button>
+          
+          <div className="search-input-wrapper">
+             <input 
+              type="text" 
+              placeholder="Search family..." 
+              value={searchQuery}
+              onChange={handleSearch}
+              className="search-input"
+            />
+          </div>
+
+          {isSearchOpen && searchResults.length > 0 && (
             <div className="search-results">
               {searchResults.map(result => (
                 <div 
@@ -209,6 +229,9 @@ const Tree = () => {
   const [loadingMembers, setLoadingMembers] = useState(true);
   const [membersError, setMembersError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  
+  // Preview State (Interactive Mode)
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
 
   const serverUrl = SERVER_URL;
 
@@ -291,6 +314,15 @@ const Tree = () => {
     await fetchFamilyMembers();
   };
 
+  const togglePreview = () => {
+    setIsPreviewMode(!isPreviewMode);
+    if (!isPreviewMode) {
+      setSuccessMessage('Entered Preview Mode');
+    } else {
+      setSuccessMessage('Exited Preview Mode');
+    }
+  };
+
   const handleDownload = async () => {
     const flowElement = document.querySelector('.react-flow');
     if (flowElement) {
@@ -355,18 +387,20 @@ const Tree = () => {
   };
 
   return (
-    <div className="tree-page-container">
-      <Navbar />
+    <div className={`tree-page-container ${isPreviewMode ? 'preview-mode' : ''}`}>
+      {!isPreviewMode && <Navbar />}
       
       {familyMembers.length > 0 && (
         <ActionBar 
           onDownload={handleDownload} 
           onShare={() => setShareModalOpen(true)} 
           onGenerateBook={handleGenerateBook}
+          onPreview={togglePreview}
+          isPreviewMode={isPreviewMode}
         />
       )}
 
-      <div className="tree-content" style={{ height: 'calc(100vh - 80px)', width: '100%' }}>
+      <div className="tree-content" style={{ height: isPreviewMode ? '100vh' : 'calc(100vh - 80px)', width: '100%' }}>
         {loadingMembers && <div className="loading-overlay">Loading family tree...</div>}
         {membersError && <p className="error-message">{membersError}</p>}
         {successMessage && <div className="success-toast">{successMessage}</div>}

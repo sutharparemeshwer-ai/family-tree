@@ -173,39 +173,105 @@
 .search-panel {
   margin: 20px;
   z-index: 1000;
+  pointer-events: none; /* Let clicks pass through the panel container */
 }
 
 .search-container {
   position: relative;
-  width: 280px; /* Slightly wider default */
+  display: flex;
+  align-items: center;
+  pointer-events: auto; /* Re-enable clicks for the search container */
+}
+
+.search-toggle-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 1002;
+  outline: none;
+}
+
+.search-toggle-btn:hover {
+  transform: scale(1.1);
+  box-shadow: var(--shadow-lg);
+  background: white;
+}
+
+.search-input-wrapper {
+  width: 0;
+  overflow: hidden;
+  transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+  opacity: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  margin-left: -25px; /* Pull behind button initially */
+  border-radius: 0 30px 30px 0;
+  height: 50px;
+}
+
+.search-container.open .search-input-wrapper {
+  width: 280px;
+  opacity: 1;
+  margin-left: -25px; /* Overlap slightly or adjust */
+  padding-left: 30px; /* Space for the button */
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-left: none; /* Connect to button */
+  box-shadow: var(--shadow-md);
+  z-index: 1001; /* Behind button */
+}
+
+/* Adjust button when open to look connected */
+.search-container.open .search-toggle-btn {
+  background: white;
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow: none; /* Remove shadow to blend */
+  z-index: 1003;
 }
 
 .search-input {
   width: 100%;
-  padding: 12px 18px; /* More padding */
-  border-radius: 25px;
-  border: 1px solid rgba(255, 255, 255, 0.6); /* Glassy border */
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  box-shadow: var(--shadow-md);
+  height: 100%;
+  border: none;
+  background: transparent;
+  padding: 0 15px;
   font-size: 1rem;
   outline: none;
-  transition: all 0.3s ease;
   color: var(--text-main);
 }
 
-.search-input:focus {
-  background: var(--white);
-  box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.15), var(--shadow-lg); /* Green glow on focus */
-  border-color: var(--primary-color);
-  width: 320px; /* Expand on focus */
+.close-search-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+}
+
+.close-search-btn:hover {
+  color: var(--error);
 }
 
 .search-results {
   position: absolute;
-  top: calc(100% + 10px); /* Position below input */
-  left: 0;
-  right: 0;
+  top: calc(100% + 10px);
+  left: 55px; /* Align with input start */
+  width: 280px;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.7);
@@ -213,6 +279,12 @@
   box-shadow: var(--shadow-lg);
   overflow: hidden;
   animation: slideDown 0.2s ease-out;
+  z-index: 1000;
+  display: none; /* Hidden by default */
+}
+
+.search-container.open .search-results {
+  display: block; /* Show when open */
 }
 
 .search-result-item {
@@ -272,6 +344,16 @@
 /* Ensure edges are distinct */
 .printing-mode .react-flow__edge {
   z-index: 0; 
+}
+
+/* Preview Mode Styles (Interactive) */
+.tree-page-container.preview-mode .search-panel,
+.tree-page-container.preview-mode .tree-title-overlay {
+  display: none !important;
+}
+
+.tree-page-container.preview-mode .react-flow__minimap {
+  display: none !important; /* Optional: Hide minimap for cleaner view */
 }
 
 /* Responsive Styles */

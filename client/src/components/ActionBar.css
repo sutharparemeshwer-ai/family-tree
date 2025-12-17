@@ -1,111 +1,154 @@
-.action-bar {
+.fab-container {
+  position: fixed;
+  top: 130px;
+  right: 30px;
   display: flex;
-  gap: 15px; /* Increased gap */
-  background: var(--glass-bg); /* Glassmorphism background */
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  border: 1px solid var(--glass-border);
-  border-radius: 50px; /* Pill shape */
-  box-shadow: var(--shadow-lg); /* Larger shadow */
-  position: absolute;
-  top: 130px; /* Below Navbar, slightly adjusted */
-  right: 30px; /* Adjusted right position */
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 15px;
   z-index: 100;
-  padding: 10px 20px; /* Adjusted padding */
-  transition: all 0.3s ease;
 }
 
-.action-bar:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15); /* More pronounced shadow on hover */
+/* Main Toggle Button */
+.fab-main {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(129, 199, 132, 0.4); /* Green transparent */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(129, 199, 132, 0.6);
+  color: var(--text-main); /* Changed to text-main for better contrast with light green background */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 102;
 }
 
+.fab-main:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.fab-container.open .fab-main {
+  transform: rotate(45deg);
+  background-color: #ef5350; /* Red color when open (to signify close) */
+}
+
+/* Actions Wrapper */
+.fab-actions {
+  display: flex;
+  flex-direction: column-reverse; /* Stack upwards from bottom */
+  gap: 15px;
+  align-items: flex-end; /* Align to right so tooltips extend left */
+  margin-bottom: 10px;
+  pointer-events: none; /* Disable clicks when closed */
+}
+
+.fab-container.open .fab-actions {
+  pointer-events: auto;
+}
+
+/* Action Buttons */
 .action-btn {
   display: flex;
   align-items: center;
-  gap: 10px; /* Increased gap for icon and text */
+  justify-content: flex-end; /* Align content to right */
+  gap: 10px;
   border: none;
-  padding: 10px 20px; /* Adjusted padding */
-  border-radius: 30px; /* More rounded buttons */
-  font-weight: 600; /* Bolder text */
+  background: transparent;
+  padding: 0;
   cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 0.95rem; /* Slightly larger text */
-  color: var(--text-main); /* Default text color */
+  opacity: 0;
+  transform: translateY(20px) scale(0.8);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
 }
 
-.action-btn:hover {
-  transform: translateY(-2px);
+.fab-container.open .action-btn {
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
-.action-btn .icon {
-  width: 20px; /* Icon size */
-  height: 20px;
+/* Staggered Animation Delays */
+.fab-container.open .action-btn:nth-child(1) { transition-delay: 0.05s; }
+.fab-container.open .action-btn:nth-child(2) { transition-delay: 0.1s; }
+.fab-container.open .action-btn:nth-child(3) { transition-delay: 0.15s; }
+.fab-container.open .action-btn:nth-child(4) { transition-delay: 0.2s; }
+
+/* Icon Container within Button */
+.btn-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
 }
 
-/* Specific button styles - using theme colors */
-.download-btn {
-  background-color: var(--primary-light);
-  color: var(--white);
-  box-shadow: 0 4px 10px rgba(76, 175, 80, 0.2);
+.action-btn:hover .btn-icon {
+  transform: scale(1.1);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
 }
 
-.download-btn:hover {
-  background-color: var(--primary-color);
-  box-shadow: 0 6px 15px rgba(76, 175, 80, 0.3);
+/* Button Specific Colors */
+.download-btn .btn-icon {
+  background-color: var(--primary-light); /* Greenish */
+  color: white;
 }
 
-.share-btn {
-  background-color: var(--accent-color);
+.share-btn .btn-icon {
+  background-color: var(--accent-color); /* Teal/Blueish */
   color: var(--text-main);
-  box-shadow: 0 4px 10px rgba(129, 199, 132, 0.2);
 }
 
-.share-btn:hover {
-  background-color: #a5d6a7; /* Slightly darker accent */
-  box-shadow: 0 6px 15px rgba(129, 199, 132, 0.3);
+.book-btn .btn-icon {
+  background-color: #42a5f5; /* Blue */
+  color: white;
 }
 
-.book-btn {
-  background-color: #90caf9; /* Light blue, can be customized */
+.preview-btn .btn-icon {
+  background-color: #7e57c2; /* Deep Purple */
+  color: white;
+}
+
+.preview-btn.active .btn-icon {
+  background-color: #ef5350; /* Red */
+}
+
+/* Tooltip Labels */
+.action-tooltip {
+  background-color: white;
   color: var(--text-main);
-  box-shadow: 0 4px 10px rgba(144, 202, 249, 0.2);
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  white-space: nowrap;
+  opacity: 0; /* Hidden by default until hover or always visible when open? Let's make visible when open */
+  transform: translateX(10px);
+  transition: all 0.2s ease;
+  pointer-events: none;
 }
 
-.book-btn:hover {
-  background-color: #64b5f6; /* Slightly darker blue */
-  box-shadow: 0 6px 15px rgba(144, 202, 249, 0.3);
+/* Show tooltips when menu is open */
+.fab-container.open .action-tooltip {
+  opacity: 1;
+  transform: translateX(0);
 }
 
-/* Responsive Styles */
+/* Mobile Responsiveness */
 @media (max-width: 768px) {
-  .action-bar {
+  .fab-container {
     top: auto;
-    bottom: 30px;
-    right: auto;
-    left: 50%;
-    transform: translateX(-50%);
-    width: max-content;
-    max-width: 90%;
-    overflow-x: auto;
-    white-space: nowrap; /* Prevent wrapping */
-    padding: 8px 15px;
-    gap: 10px;
-  }
-}
-
-@media (max-width: 480px) {
-  .action-btn {
-    padding: 8px;
-    gap: 0;
-  }
-  
-  .action-btn span:not(.icon) {
-    display: none; /* Hide text, show only icon on small screens */
-  }
-  
-  .action-btn .icon {
-    width: 22px;
-    height: 22px;
+    bottom: 30px; /* Stick to bottom right on mobile */
+    right: 20px;
   }
 }
