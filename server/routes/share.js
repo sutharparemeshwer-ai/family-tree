@@ -5,11 +5,10 @@ const authMiddleware = require('../middleware/authMiddleware');
 const multer = require('multer');
 const path = require('path');
 
-// Multer setup (reusing for consistency)
+// Multer setup
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadPath = path.join(__dirname, '../uploads');
-    console.log(`[Multer Share] Saving file to: ${uploadPath}`);
     cb(null, uploadPath);
   },
   filename: (req, file, cb) => {
@@ -19,14 +18,22 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// Protected route to generate a link
+// --- Protected Routes (Require Owner Login) ---
 router.post('/generate', authMiddleware, shareController.generateShareLink);
+router.get('/links', authMiddleware, shareController.getLinks);
+router.delete('/links/:id', authMiddleware, shareController.deleteLink);
 
-// Public route to view tree via token
+// --- Public / Guest Routes ---
+router.get('/verify/:token', shareController.verifyLink);
 router.get('/:token', shareController.getSharedTree);
 
-// Public route (but protected by token logic) to add member
-// Note: 'profileImage' field name must match frontend
+// Add member via token (Protected by token permission + Auditing)
 router.post('/:token/members', upload.single('profileImage'), shareController.addMemberViaToken);
+
+// Edit member via token
+router.put('/:token/members/:memberId', upload.single('profileImage'), shareController.editMemberViaToken);
+
+// Delete member via token
+router.delete('/:token/members/:memberId', shareController.deleteMemberViaToken);
 
 module.exports = router;

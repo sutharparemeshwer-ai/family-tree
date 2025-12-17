@@ -1,4 +1,5 @@
 const db = require('../db');
+const auditController = require('./auditController');
 
 const createMember = async (req, res) => {
   // Note: 'relativeToId' is the ID of the person you clicked the '+' on.
@@ -171,6 +172,18 @@ const createMember = async (req, res) => {
     }
 
     await client.query('COMMIT');
+
+    // LOG ACTION
+    await auditController.logAction({
+      treeOwnerId: tree_owner_id,
+      actorName: user_first_name || 'Owner',
+      actorEmail: req.user.email, // Assuming middleware adds this, if not it's fine
+      actorType: 'owner',
+      actionType: 'ADD_MEMBER',
+      targetName: `${firstName} ${lastName}`,
+      details: { relation: relationType }
+    });
+
     res.status(201).json({ message: 'Family member added successfully!', newMemberId });
 
   } catch (error) {
@@ -334,6 +347,18 @@ const updateMember = async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ message: 'Member not found or unauthorized.' });
     }
+
+    // LOG ACTION
+    const updatedMember = result.rows[0];
+    await auditController.logAction({
+      treeOwnerId: tree_owner_id,
+      actorName: req.user.first_name || 'Owner',
+      actorType: 'owner',
+      actionType: 'EDIT_MEMBER',
+      targetName: `${updatedMember.first_name} ${updatedMember.last_name}`,
+      details: { updatedFields: Object.keys(req.body).filter(k => k !== 'tree_owner_id') }
+    });
+
     res.json({ message: 'Member updated successfully', member: result.rows[0] });
   } catch (error) {
     console.error('Error updating member:', error);
@@ -367,6 +392,17 @@ const deleteMember = async (req, res) => {
 
     const deleteQuery = 'DELETE FROM family_members WHERE id = $1';
     await db.query(deleteQuery, [memberId]);
+
+    // LOG ACTION
+    const deletedMember = checkResult.rows[0];
+    await auditController.logAction({
+      treeOwnerId: tree_owner_id,
+      actorName: req.user.first_name || 'Owner',
+      actorType: 'owner',
+      actionType: 'DELETE_MEMBER',
+      targetName: `${deletedMember.first_name} ${deletedMember.last_name}`,
+      details: { memberId: memberId }
+    });
 
     res.json({ message: 'Member deleted successfully' });
   } catch (error) {

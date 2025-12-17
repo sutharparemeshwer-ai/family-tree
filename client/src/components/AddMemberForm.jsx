@@ -14,7 +14,7 @@ const UploadIcon = () => (
   </svg>
 );
 
-const AddMemberForm = ({ relationType, onCancel, relativeToId, onMemberAdded, customEndpoint, editingMember }) => {
+const AddMemberForm = ({ relationType, onCancel, relativeToId, onMemberAdded, customEndpoint, customHeaders, editingMember }) => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -101,8 +101,8 @@ const AddMemberForm = ({ relationType, onCancel, relativeToId, onMemberAdded, cu
         // Update existing member
         res = await api.put(`/members/${editingMember.id}`, data);
       } else if (customEndpoint) {
-        // Shared view add
-        res = await axios.post(customEndpoint, data);
+        // Shared view add (using axios directly to bypass default interceptors if needed, or pass custom headers)
+        res = await axios.post(customEndpoint, data, { headers: customHeaders });
       } else {
         // Standard add
         res = await api.post('/members', data);

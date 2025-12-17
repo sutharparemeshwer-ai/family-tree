@@ -3,93 +3,93 @@ import api from '../utils/api';
 import './NewsFeed.css';
 
 const NewsFeed = () => {
-  const [posts, setPosts] = useState([]);
+  const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [newPostContent, setNewPostContent] = useState('');
-  const [isPosting, setIsPosting] = useState(false);
 
-  const activeProfile = JSON.parse(localStorage.getItem('activeProfile'));
-
-  const fetchFeed = async () => {
+  const fetchLogs = async () => {
     setLoading(true);
     try {
-      const res = await api.get('/social/feed');
-      setPosts(res.data);
+      const res = await api.get('/audit');
+      setLogs(res.data);
     } catch (err) {
-      console.error('Error fetching feed:', err);
-      setError('Failed to load news feed.');
+      console.error('Error fetching activity logs:', err);
+      setError('Failed to load recent activity.');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchFeed();
+    fetchLogs();
   }, []);
-
-  const handlePostSubmit = async (e) => {
-    e.preventDefault();
-    if (!newPostContent.trim()) {
-      alert('Post content cannot be empty.');
-      return;
-    }
-    if (!activeProfile) {
-      alert('Please select an active profile to post.');
-      return;
-    }
-
-    setIsPosting(true);
-    try {
-      await api.post('/social/posts', {
-        content: newPostContent,
-        authorMemberId: activeProfile.id,
-      });
-      setNewPostContent('');
-      fetchFeed(); // Refresh feed
-    } catch (err) {
-      console.error('Error creating post:', err);
-      alert('Failed to create post.');
-    } finally {
-      setIsPosting(false);
-    }
-  };
 
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
-    return date.toLocaleString(); // e.g., "12/13/2025, 10:30:00 AM"
+    const now = new Date();
+    const diffInSeconds = Math.floor((now - date) / 1000);
+
+    if (diffInSeconds < 60) return 'Just now';
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+    return date.toLocaleDateString(); 
+  };
+
+  const getActionDescription = (log) => {
+    const actor = log.actor_name || 'Someone';
+    const target = log.target_name || 'an item';
+    
+    switch (log.action_type) {
+      case 'ADD_MEMBER':
+        return <span><strong>{actor}</strong> added <strong>{target}</strong> to the tree.</span>;
+      case 'EDIT_MEMBER':
+        return <span><strong>{actor}</strong> edited details for <strong>{target}</strong>.</span>;
+      case 'DELETE_MEMBER':
+        return <span><strong>{actor}</strong> removed <strong>{target}</strong> from the tree.</span>;
+      default:
+        return <span><strong>{actor}</strong> performed {log.action_type}.</span>;
+    }
+  };
+
+  const getActionIcon = (type) => {
+    switch (type) {
+      case 'ADD_MEMBER': return '✅';
+      case 'EDIT_MEMBER': return '✏️';
+      case 'DELETE_MEMBER': return '🗑️';
+      default: return '📝';
+    }
   };
 
   return (
     <div className="news-feed-container">
-      <h3 className="feed-title">Family News Feed</h3>
+      <div className="feed-header">
+        <h3 className="feed-title">Recent Activity</h3>
+        <button className="refresh-btn" onClick={fetchLogs}>Refresh</button>
+      </div>
 
-      {activeProfile && (
-        <form className="new-post-form" onSubmit={handlePostSubmit}>
-          <textarea
-            placeholder={`What's on your mind, ${activeProfile.name}?`}
-            value={newPostContent}
-            onChange={(e) => setNewPostContent(e.target.value)}
-            disabled={isPosting}
-          ></textarea>
-          <button type="submit" disabled={isPosting}>
-            {isPosting ? 'Posting...' : 'Post'}
-          </button>
-        </form>
-      )}
-
-      {loading && <p>Loading feed...</p>}
+      {loading && <div className="loading-feed">Loading updates...</div>}
       {error && <p className="error-message">{error}</p>}
 
       <div className="posts-list">
-        {!loading && posts.length === 0 && <p className="no-posts">No recent activity. Start by adding a post!</p>}
-        {posts.map(post => (
-          <div key={post.id} className="post-item">
-            <div className="post-header">
-              <span className="post-author">{post.author_name}</span>
-              <span className="post-time">{formatTimestamp(post.created_at)}</span>
+        {!loading && logs.length === 0 && (
+          <div className="empty-state">
+            <p>No recent activity recorded.</p>
+            <span style={{ fontSize: '2rem', display: 'block', marginTop: '10px' }}>🍃</span>
+          </div>
+        )}
+        
+        {logs.map(log => (
+          <div key={log.id} className="post-item activity-item">
+            <div className="activity-icon">
+              {getActionIcon(log.action_type)}
             </div>
-            <p className="post-content">{post.content}</p>
+            <div className="activity-content">
+              <p className="post-content">{getActionDescription(log)}</p>
+              <span className="post-time">
+                {formatTimestamp(log.created_at)} 
+                {log.actor_email && <span className="actor-email"> • {log.actor_email}</span>}
+              </span>
+            </div>
           </div>
         ))}
       </div>

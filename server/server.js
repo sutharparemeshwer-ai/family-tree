@@ -8,6 +8,7 @@ const memoryRoutes = require('./routes/memories');
 const userRoutes = require('./routes/users');
 const shareRoutes = require('./routes/share');
 const socialRoutes = require('./routes/social'); // NEW
+const auditRoutes = require('./routes/audit'); // NEW
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -43,6 +44,7 @@ app.use('/api/memories', memoryRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/share', shareRoutes);
 app.use('/api/social', socialRoutes); // NEW
+app.use('/api/audit', auditRoutes); // NEW
 
 // Basic Route
 app.get('/', (req, res) => {
